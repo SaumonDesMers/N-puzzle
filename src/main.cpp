@@ -1,6 +1,4 @@
 #include <iostream>
-
-#include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -40,12 +38,13 @@ struct Game {
 	int size;
 	vec2 emptyPos;
 
-	Game(int _s = 0, Grid _g = Grid()) : grid(_g), size(_s) {
-		for (int i = 0; i < size; i++)
-			grid[i].insert(grid[i].begin(), size, 0);
-	}
+	// Game(int _s = 0, Grid _g = Grid()) : grid(_g), size(_s) {
+	// 	for (int i = 0; i < size; i++)
+	// 		grid[i].insert(grid[i].begin(), size, 0);
+	// }
 	Game(vector<int> tab, int _s) : size(_s) {
 		for (int row = 0; row < size; row++) {
+			grid.push_back(vector<int>());
 			for (int col = 0; col < size; col++) {
 				grid[row].push_back(tab[row * size + col]);
 				if (tab[row * size + col] == 0)
@@ -53,8 +52,8 @@ struct Game {
 			}
 		}
 	}
-	Game(Game const &src) : grid(src.grid) {}
-	Game operator=(Game const &src) { grid = src.grid; return *this; }
+	Game(Game const &src) : grid(src.grid), size(src.size), emptyPos(src.emptyPos) {}
+	Game operator=(Game const &src) { grid = src.grid; size = src.size; emptyPos = src.emptyPos; return *this; }
 
 	int &at(vec2 pos) {
 		return grid[pos.row][pos.col];
@@ -119,9 +118,13 @@ struct Node {
 		return *this;
 	}
 
-	void clear() {
+	void clear(bool rootReach = false) {
+		if (!rootReach && parent != NULL) {
+			parent->clear();
+			return;
+		}
 		for (size_t i = 0; i < childs.size(); i++)
-			childs[i]->clear();
+			childs[i]->clear(true);
 		delete this;
 	}
 
@@ -145,7 +148,7 @@ int manhattanDistance(Game &game, Game &goal) {
 
 Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb = -1) {
 	vector<Node *> open;
-	vector<Node *> closed;
+	vector<Game::Grid> closed;
 	Node *root = new Node(start);
 
 	open.push_back(root);
@@ -153,7 +156,7 @@ Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb =
 	while (--nb) {
 		Node *current = open.back();
 		open.pop_back();
-		closed.push_back(current);
+		closed.push_back(current->game.grid);
 
 		if (heuristique(current->game, goal) == 0)
 			return current;
@@ -161,21 +164,46 @@ Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb =
 		current->expand();
 
 		for (size_t i = 0; i < current->childs.size(); i++) {
-			open.push_back(current->childs[i]);
+			if (find(closed.begin(), closed.end(), current->childs[i]->game.grid) == closed.end())
+				open.push_back(current->childs[i]);
 		}
 
 		if (open.empty())
 			break;
 
 		sort(open.begin(), open.end(), [heuristique, &goal](Node *n1, Node *n2) {
-			return heuristique(n1->game, goal) < heuristique(n2->game, goal);
+			return heuristique(n1->game, goal) > heuristique(n2->game, goal);
 		});
 
-		// for (size_t i = 0; i < open.size(); i++)
-		// 	cerr << "(" << heuristique(open[i]->game, goal) << ") ";
-		// cerr << endl;
+		// cout << "\rTurn " << abs(nb);
 	}
+	// cout << "Stop after " << abs(nb) << " turn" << endl;
 	return NULL;
+}
+
+Node *testSize3() {
+	vector<int> goal_std = {1,2,3,4,5,6,7,8,0};
+	vector<int> goal_spiral = {1,2,3,8,0,4,7,6,5};
+
+	vector<int> start = {2,1,3,
+						 5,8,4,
+						 7,6,0};
+	
+	Node *n = AStart(Game(start, 3), Game(goal_std, 3), manhattanDistance, 1000);
+	return n;
+}
+
+Node *testSize4() {
+	vector<int> goal_std = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
+	vector<int> goal_spiral = {1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7};
+
+	vector<int> start = {1,3,6,9,
+						 15,2,12,5,
+						 14,10,13,8,
+						 7,4,11,0};
+	
+	Node *n = AStart(Game(start, 4), Game(goal_std, 4), manhattanDistance, 1000);
+	return n;
 }
 
 int main(int argc, char const *argv[])
@@ -183,15 +211,20 @@ int main(int argc, char const *argv[])
 	(void)argc;
 	(void)argv;
 
-	vector<int> goal = {1,2,3,8,0,4,7,6,5};
-	vector<int> start = {1,2,3,8,0,4,7,6,5};
-
-	Node *n = AStart(Game(start, 3), Game(goal, 3), manhattanDistance, 100);
+	Node *n = testSize4();
 
 	if (n == NULL)
-		cout << "No solution found" << endl;
+		cout << "No solution found after 1000 iterations" << endl;
 	else {
-		cout << "Solution found" << endl;
+		cout << "Solution found in ";
+		Node *tmp = n;
+		int nb = 0;
+		while (tmp) {
+			tmp = tmp->parent;
+			nb++;
+		}
+		cout << nb << " turn" << endl;
+		n->clear();
 	}
 
 	return 0;
