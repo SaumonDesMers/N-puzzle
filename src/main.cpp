@@ -1,140 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
-
-using namespace std;
-
-struct vec2;
-struct Game;
-struct Turn;
-
-struct vec2 {
-	int row; int col;
-	vec2(int _row = 0, int _col = 0) : row(_row), col(_col) {}
-	vec2(string s) {
-		string s_row = s.substr(0, s.find_first_not_of("-0123456789"));
-		string s_col = s.substr(s.find_last_not_of("-0123456789"), s.size());
-		row = atoi(s_row.c_str());
-		row = atoi(s_col.c_str());
-	}
-	vec2(vec2 const &src) : row(src.row), col(src.col) {}
-	vec2 &operator=(vec2 const &src) { row = src.row; col = src.col; return *this; }
-	bool operator==(vec2 const &src) const { return row == src.row && col == src.col; }
-	bool operator!=(vec2 const &src) const { return !(*this == src); }
-	void set(int _row, int _col) { row = _row; col = _col; }
-	void add(int _row, int _col) { row += _row; col += _col; }
-	void add(vec2 &v) { row += v.row; col += v.col; }
-	string to_str() { return to_string(col) + " " + to_string(row); }
-} npos(-1, -1);
-
-struct Game {
-	typedef vector<vector<int>> Grid;
-
-	Grid grid;
-	int size;
-	vec2 emptyPos;
-
-	// Game(int _s = 0, Grid _g = Grid()) : grid(_g), size(_s) {
-	// 	for (int i = 0; i < size; i++)
-	// 		grid[i].insert(grid[i].begin(), size, 0);
-	// }
-	Game(vector<int> tab, int _s) : size(_s) {
-		for (int row = 0; row < size; row++) {
-			grid.push_back(vector<int>());
-			for (int col = 0; col < size; col++) {
-				grid[row].push_back(tab[row * size + col]);
-				if (tab[row * size + col] == 0)
-					emptyPos.set(row, col);
-			}
-		}
-	}
-	Game(Game const &src) : grid(src.grid), size(src.size), emptyPos(src.emptyPos) {}
-	Game operator=(Game const &src) { grid = src.grid; size = src.size; emptyPos = src.emptyPos; return *this; }
-
-	int &at(vec2 pos) {
-		return grid[pos.row][pos.col];
-	}
-
-	bool outOfBound(vec2 pos) {
-		return pos.row < 0 || pos.row >= size || pos.col < 0 || pos.col >= size;
-	}
-
-	vector<Game> getNextTurns() {
-		vector<Game> nextTurns;
-		vector<vec2> nextEmptyPos = {
-			vec2(emptyPos.row, emptyPos.col + 1),
-			vec2(emptyPos.row, emptyPos.col - 1),
-			vec2(emptyPos.row + 1, emptyPos.col),
-			vec2(emptyPos.row - 1, emptyPos.col)
-		};
-		for (size_t i = 0; i < 4; i++) {
-			if (!outOfBound(nextEmptyPos[i])) {
-				Game nextTurn(*this);
-				swap(nextTurn.at(nextTurn.emptyPos), nextTurn.at(nextEmptyPos[i]));
-				nextTurn.emptyPos = nextEmptyPos[i];
-				nextTurns.push_back(nextTurn);
-			}
-		}
-		return nextTurns;
-	}
-
-	vec2 find(int val) {
-		for (int row = 0; row < size; row++) {
-			for (int col = 0; col < size; col++) {
-				if (grid[row][col] == val)
-					return vec2(row, col);
-			}
-		}
-		return npos;
-	}
-
-	void print() {
-		for (int row = 0; row < size; row++) {
-			for (int col = 0; col < size; col++) {
-				cout << grid[row][col];
-			}
-			cout << endl;
-		}
-	}
-
-};
-
-struct Node {
-	vector<Node *> childs;
-	Node *parent;
-
-	Game game;
-
-	Node(Game _g, Node *_p = NULL) : childs(vector<Node *>()), parent(_p), game(_g) {}
-	Node(Node const &src) : childs(src.childs), parent(src.parent), game(src.game) {}
-	Node operator=(Node const &src) {
-		childs = src.childs;
-		parent = src.parent;
-		game = src.game;
-		return *this;
-	}
-
-	void clear(bool rootReach = false) {
-		if (!rootReach && parent != NULL) {
-			parent->clear();
-			return;
-		}
-		for (size_t i = 0; i < childs.size(); i++)
-			childs[i]->clear(true);
-		delete this;
-	}
-
-	void expand() {
-		vector<Game> nextTurns = game.getNextTurns();
-		for (size_t i = 0; i < nextTurns.size(); i++)
-			childs.push_back(new Node(nextTurns[i], this));
-	}
-
-};
+#include "include.hpp"
 
 int manhattanDistance(Game &game, Game &goal) {
 	int val = 0;
@@ -183,7 +47,7 @@ Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb =
 
 Node *testSize3() {
 	vector<int> goal_std = {1,2,3,4,5,6,7,8,0};
-	vector<int> goal_spiral = {1,2,3,8,0,4,7,6,5};
+	vector<int> goal_snail = {1,2,3,8,0,4,7,6,5};
 
 	vector<int> start = {2,1,3,
 						 5,8,4,
@@ -195,14 +59,18 @@ Node *testSize3() {
 
 Node *testSize4() {
 	vector<int> goal_std = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
-	vector<int> goal_spiral = {1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7};
+	vector<int> goal_snail = {1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7};
 
-	vector<int> start = {1,3,6,9,
-						 15,2,12,5,
-						 14,10,13,8,
-						 7,4,11,0};
+	// vector<int> start = {1,3,6,9,
+	// 					 15,2,12,5,
+	// 					 14,10,13,8,
+	// 					 7,4,11,0};
+	Game start = shuffleGame(Game(goal_std, 4), 100);
+
+	cout << "Start game: " << endl;
+	start.print();
 	
-	Node *n = AStart(Game(start, 4), Game(goal_std, 4), manhattanDistance, 1000);
+	Node *n = AStart(start, Game(goal_std, 4), manhattanDistance, 1000);
 	return n;
 }
 
@@ -211,20 +79,30 @@ int main(int argc, char const *argv[])
 	(void)argc;
 	(void)argv;
 
-	Node *n = testSize4();
+	// Node *n = testSize4();
 
-	if (n == NULL)
-		cout << "No solution found after 1000 iterations" << endl;
-	else {
-		cout << "Solution found in ";
-		Node *tmp = n;
-		int nb = 0;
-		while (tmp) {
-			tmp = tmp->parent;
-			nb++;
-		}
-		cout << nb << " turn" << endl;
-		n->clear();
+	// if (n == NULL)
+	// 	cout << "No solution found after 1000 iterations" << endl;
+	// else {
+	// 	cout << "Solution found in ";
+	// 	Node *tmp = n;
+	// 	int nb = 0;
+	// 	while (tmp) {
+	// 		tmp = tmp->parent;
+	// 		nb++;
+	// 	}
+	// 	cout << nb << " turn" << endl;
+	// 	n->clear();
+	// }
+
+	vector<int> goal_std = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
+	vector<int> goal_snail = {1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7};
+
+	for (int i = 0; i < 1; i++) {
+		Game start = randomGame(4);
+		start.print();
+		cout << boolalpha;
+		cout << "std: " << isSolvable(start, goal_std) << "\tsnail: " << isSolvable(start, goal_snail) << endl;
 	}
 
 	return 0;

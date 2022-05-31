@@ -5,7 +5,8 @@ CFLAGS		= -g -Wall -Wextra -Werror
 NAME			= n-puzzle
 
 SRC_DIR		= src
-SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing.cpp astart.cpp)
+SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing.cpp astart.cpp generation.cpp \
+				solvability.cpp)
 HEADER_DIR	= include
 
 OBJ_DIR		= obj
