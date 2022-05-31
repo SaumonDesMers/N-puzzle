@@ -53,7 +53,7 @@ Node *testSize3() {
 						 5,8,4,
 						 7,6,0};
 	
-	Node *n = AStart(Game(start, 3), Game(goal_std, 3), manhattanDistance, 1000);
+	Node *n = AStart(Game(start), Game(goal_std), manhattanDistance, 1000);
 	return n;
 }
 
@@ -65,12 +65,12 @@ Node *testSize4() {
 	// 					 15,2,12,5,
 	// 					 14,10,13,8,
 	// 					 7,4,11,0};
-	Game start = shuffleGame(Game(goal_std, 4), 100);
+	Game start = shuffleGame(Game(goal_std), 100);
 
 	cout << "Start game: " << endl;
 	start.print();
 	
-	Node *n = AStart(start, Game(goal_std, 4), manhattanDistance, 1000);
+	Node *n = AStart(start, Game(goal_std), manhattanDistance, 1000);
 	return n;
 }
 
@@ -98,12 +98,13 @@ int main(int argc, char const *argv[])
 	vector<int> goal_std = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
 	vector<int> goal_snail = {1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7};
 
-	for (int i = 0; i < 1; i++) {
-		Game start = randomGame(4);
-		start.print();
-		cout << boolalpha;
-		cout << "std: " << isSolvable(start, goal_std) << "\tsnail: " << isSolvable(start, goal_snail) << endl;
-	}
+	for (int i = 0; i < 10; i++) {
+		Game start = randomGame(3);
+		bool b = isSolvable(start, goal_std);
+		Node *n = AStart(start, goal_std, manhattanDistance, 1000);
 
+		cout << boolalpha;
+		cout << b << "\t" << (n != NULL) << endl;
+	}
 	return 0;
 }

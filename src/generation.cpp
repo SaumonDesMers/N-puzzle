@@ -5,7 +5,7 @@ Game randomGame(size_t size) {
     for (size_t i = 0; i < tab.size(); i++)
         tab[i] = i;
     random_shuffle(tab.begin(), tab.end());
-    return Game(tab, size);
+    return Game(tab);
 }
 
 Game shuffleGame(Game game, size_t shuffleNb) {

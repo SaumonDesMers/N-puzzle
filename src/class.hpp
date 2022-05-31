@@ -42,7 +42,7 @@ struct Game {
 	// 	for (int i = 0; i < size; i++)
 	// 		grid[i].insert(grid[i].begin(), size, 0);
 	// }
-	Game(vector<int> tab, int _s) : size(_s) {
+	Game(vector<int> tab) : size(sqrt(tab.size())) {
 		for (int row = 0; row < size; row++) {
 			grid.push_back(vector<int>());
 			for (int col = 0; col < size; col++) {
