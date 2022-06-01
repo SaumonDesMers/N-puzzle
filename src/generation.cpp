@@ -1,11 +1,28 @@
 #include "include.hpp"
 
+// Game randomGame(size_t size) {
+//     vector<int> tab(size * size);
+//     for (size_t i = 0; i < tab.size(); i++)
+//         tab[i] = i;
+//     srand(time(NULL));
+//     random_shuffle(tab.begin(), tab.end());
+//     return Game(tab);
+// }
+
 Game randomGame(size_t size) {
     vector<int> tab(size * size);
     for (size_t i = 0; i < tab.size(); i++)
         tab[i] = i;
-    random_shuffle(tab.begin(), tab.end());
-    return Game(tab);
+
+    vector<int> ret;
+    for (size_t i = 0; i < size * size; i++) {
+        srand(time(NULL));
+        int index = rand() % tab.size();
+        ret.push_back(tab[index]);
+        swap(tab[index], tab.back());
+        tab.pop_back();
+    }
+    return ret;
 }
 
 Game shuffleGame(Game game, size_t shuffleNb) {
@@ -15,4 +32,18 @@ Game shuffleGame(Game game, size_t shuffleNb) {
         game = childs[rand() % childs.size()];
     }
     return game;
+}
+
+Game goalGeneration(size_t size, string type) {
+    if (type == "snail") {
+        switch (size) {
+            case 2: return Game({1,2,0,3});
+            case 3: return Game({1,2,3,8,0,4,7,6,5});
+            case 4: return Game({1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7});
+        }
+    }
+    vector<int> tab(size * size, 0);
+    for (size_t i = 0; i + 1 < tab.size(); i++)
+        tab[i] = i + 1;
+    return Game(tab);
 }

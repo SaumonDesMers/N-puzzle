@@ -1,12 +1,12 @@
-CC			= c++
-CFLAGS		= -g -Wall -Wextra -Werror
+CC			= clang++
+CFLAGS		= -g -Wall -Wextra -Werror -std=c++11
 # VALGRIND	= valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --show-reachable=yes --log-file=valgrind.log
 
 NAME			= n-puzzle
 
 SRC_DIR		= src
 SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing.cpp astart.cpp generation.cpp \
-				solvability.cpp)
+				solvability.cpp heuristique.cpp other.cpp)
 HEADER_DIR	= include
 
 OBJ_DIR		= obj

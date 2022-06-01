@@ -32,7 +32,7 @@ struct vec2 {
 }; //npos(-1, -1);
 
 struct Game {
-	typedef vector<vector<int>> Grid;
+	typedef vector<vector<int> > Grid;
 
 	Grid grid;
 	int size;

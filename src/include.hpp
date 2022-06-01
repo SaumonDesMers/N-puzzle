@@ -12,10 +12,16 @@
 
 using namespace std;
 
-// bool isSolvable(Game game, Game goal);
+Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb = -1);
+
 bool isSolvable(vector<int> game, vector<int> goal);
 
 Game randomGame(size_t size);
 Game shuffleGame(Game game, size_t shuffleNb);
+Game goalGeneration(size_t size, string type = string());
+
+int manhattanDistance(Game &game, Game &goal);
+
+void printTab(vector<int> tab, string sep = string());
 
 #endif
