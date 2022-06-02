@@ -12,7 +12,11 @@
 
 using namespace std;
 
-Node *AStart(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb = -1);
+typedef int (*heuristique_fct)(Game &, Game &);
+typedef bool (*sort_fct)(Node *n1, Node *n2);
+typedef Node *(*algo_fct)(Game start, Game goal, sort_fct sort, int (*h)(Game &, Game &), int nb);
+
+Node *AStart(Game start, Game goal, sort_fct sort, heuristique_fct h, int maxIter = -1);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 
@@ -21,6 +25,10 @@ Game shuffleGame(Game game, size_t shuffleNb);
 Game goalGeneration(size_t size, string type = string());
 
 int manhattanDistance(Game &game, Game &goal);
+
+bool uniformCostSearch_withDepth(Node *n1, Node *n2);
+bool uniformCostSearch_withCost(Node *n1, Node *n2);
+bool greedySearch(Node *n1, Node *n2);
 
 void printTab(vector<int> tab, string sep = string());
 

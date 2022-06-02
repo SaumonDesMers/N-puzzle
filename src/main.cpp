@@ -1,24 +1,10 @@
 #include "include.hpp"
 
-void test(Game start, Game goal,
-		Node *(*algo)(Game start, Game goal, int (*heuristique)(Game &, Game &), int nb),
-		int (*heuristique)(Game &, Game &)) {
-
-	cout << "Start = ";
-	printTab(start);
-	start.print();
-	cout << "\nGoal = ";
-	printTab(goal);
-	goal.print();
-
-	cout << (isSolvable(start, goal) ? "\nSolvable\n" : "\nNot solvable\n") << endl;
-
-	Node *n = algo(start, goal, heuristique, 1000);
-
+void getSolution(Node *n) {
 	if (n == NULL)
-		cout << "\nNo solution found" << endl;
+		cout << "No solution found" << endl;
 	else {
-		cout << "\nSolution found in ";
+		cout << "Solution found in ";
 		Node *tmp = n;
 		int nb = 0;
 		while (tmp) {
@@ -30,15 +16,45 @@ void test(Game start, Game goal,
 	}
 }
 
+void test(
+	Game start,
+	Game goal,
+	algo_fct algo,
+	sort_fct sortSearch,
+	heuristique_fct h
+) {
+	cout << "#########################################\nStart = ";
+	printTab(start);
+	// start.print();
+	// cout << "\nGoal = ";
+	// printTab(goal);
+	// goal.print();
+
+	cout << (isSolvable(start, goal) ? "\nSolvable\n" : "\nNot solvable\n") << endl;
+
+	(void)sortSearch;
+	Node *n = algo(start, goal, uniformCostSearch_withCost, h, 2000);
+	getSolution(n);
+	n = algo(start, goal, uniformCostSearch_withDepth, h, 2000);
+	getSolution(n);
+	n = algo(start, goal, greedySearch, h, 2000);
+	getSolution(n);
+
+	cout << "#########################################" << endl;;
+}
+
 int main(int argc, char const *argv[])
 {
 	(void)argc;
 	(void)argv;
 
 	Game goal = goalGeneration(3);
-	Game start = randomGame(3);
+	for (int i = 0; i < 10; i++) {
+		Game start = randomGame(3);
+		// Game start({2,6,4,8,1,5,3,0,7});
 
-	test(start, goal, AStart, manhattanDistance);
+		test(start, goal, AStart, uniformCostSearch_withCost, manhattanDistance);
+	}
 
 	return 0;
 }

@@ -34,7 +34,6 @@ bool isSolvable(vector<int> game, vector<int> goal) {
     int inversionNb = countInversion(game, goal);
     int emptyPos = emptyPosFromBottom(game);
     int size = sqrt(game.size());
-    // cout << "inv count = " << inversionNb << endl;
     return (size % 2 == 0 && emptyPos % 2 != inversionNb % 2)
         || (size % 2 == 1 && inversionNb % 2 == 0);
 }
