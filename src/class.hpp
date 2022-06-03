@@ -60,7 +60,7 @@ struct Game {
 	}
 
 	int &at(int pos) {
-		return toTab()[pos];
+		return grid[pos / size][pos % size];
 	}
 
 	bool outOfBound(vec2 pos) {
@@ -123,20 +123,18 @@ struct Node {
 	Node *parent;
 
 	Game game;
-	int depth;
+	int depth; // GCost
 	int HCost;
-	int GCost;
 
-	Node(Game _g, Node *_p = NULL, int _d = 0, int _gc = 0, int _hc = 0)
-	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc), GCost(_gc) {}
-	Node(Node const &src) : childs(src.childs), parent(src.parent), game(src.game), depth(src.depth), HCost(src.HCost), GCost(src.GCost) {}
+	Node(Game _g, Node *_p = NULL, int _d = 0, int _hc = 0)
+	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc) {}
+	Node(Node const &src) : childs(src.childs), parent(src.parent), game(src.game), depth(src.depth), HCost(src.HCost) {}
 	Node operator=(Node const &src) {
 		childs = src.childs;
 		parent = src.parent;
 		game = src.game;
 		depth = src.depth;
 		HCost = src.HCost;
-		GCost = src.GCost;
 		return *this;
 	}
 
@@ -156,14 +154,12 @@ struct Node {
 			childs.push_back(new Node(nextTurns[i], this, depth + 1));
 	}
 
-};
-
-struct AStartSetting {
-	Game start;
-	Game goalGeneration;
-	bool (*sort)(Node *n1, Node *n2, Game goal, int (*heuristique)(Game &, Game &));
-	int (*heuristique)(Game &, Game &);
-	int maxIter;
+	void setParent(Node *_p) {
+		parent = _p;
+		depth = parent->depth + 1;
+		for (size_t i = 0; i < childs.size(); i++)
+			childs[i]->setParent(this);
+	}
 };
 
 #endif

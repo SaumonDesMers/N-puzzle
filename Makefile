@@ -1,8 +1,8 @@
 CC			= clang++
-CFLAGS		= -g -Wall -Wextra -Werror -std=c++11
+CFLAGS		= -g -Wall -Wextra -Werror #-std=c++11
 # VALGRIND	= valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --show-reachable=yes --log-file=valgrind.log
 
-NAME			= n-puzzle
+NAME		= n-puzzle
 
 SRC_DIR		= src
 SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing.cpp astart.cpp generation.cpp \
@@ -22,7 +22,7 @@ $(NAME):	$(OBJ)
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp
 			@mkdir -p $(OBJ_DIR) $(DEP_DIR)
-			$(CC) -MMD $(CFLAGS) -D FT -I $(HEADER_DIR) -c $< -o $@
+			$(CC) -MMD $(CFLAGS) -I $(HEADER_DIR) -c $< -o $@
 			@mv $(OBJ_DIR)/*.d $(DEP_DIR)
 
 #----------------------------ALL----------------------------

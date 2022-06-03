@@ -5,3 +5,12 @@ void printTab(vector<int> tab, string sep) {
         cout << tab[i] << sep;
     cout << endl;
 }
+
+void getSolution(Node *n) {
+	if (n == NULL)
+		cout << "No solution found" << endl;
+	else {
+		cout << "Solution found in "<< n->depth << " turn" << endl;
+		n->clear();
+	}
+}

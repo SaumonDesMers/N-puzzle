@@ -17,12 +17,8 @@ int badPlacedTiles(Game &game, Game &goal) {
 	return val;
 }
 
-bool uniformCostSearch_withDepth(Node *n1, Node *n2) {
+bool uniformCostSearch(Node *n1, Node *n2) {
 	return n1->depth + n1->HCost > n2->depth + n2->HCost;
-}
-
-bool uniformCostSearch_withCost(Node *n1, Node *n2) {
-	return n1->GCost + n1->HCost > n2->GCost + n2->HCost;
 }
 
 bool greedySearch(Node *n1, Node *n2) {
