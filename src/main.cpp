@@ -6,18 +6,17 @@
 	cout << "#########################################\nStart = ";
 	printTab(start);
 	start.print();
-	cout << start.emptyPos.to_str() << endl;
 	// start.print();
 	// cout << "\nGoal = ";
 	// printTab(goal);
 	// goal.print();
 
-	cout << (isSolvable(start, goal) ? "\nSolvable\n" : "\nNot solvable\n") << endl;
-
 	(void)h;
 	(void)sortSearch;
-	algo(start, goal, uniformCostSearch, manhattanDistance, MAX_ITER);
-	algo(start, goal, greedySearch, manhattanDistance, MAX_ITER);
+	cout << "\nUniformCost:" << endl;
+	algo(start, goal, uniformCostSearch, h, MAX_ITER);
+	cout << "Greedy:" << endl;
+	algo(start, goal, greedySearch, h, MAX_ITER);
 
 	cout << "#########################################" << endl;
 }
@@ -42,7 +41,8 @@ int main(int argc, char const *argv[])
 	if (isSolvable(start, goal)) {
 		cout << "Start solving..." << endl;
 		test(start, goal, AStart, uniformCostSearch, manhattanDistance);
-		test(start, goal, AStart_withDepthUpdate, uniformCostSearch, manhattanDistance);
+		test(start, goal, AStart, uniformCostSearch, manDist_linCon);
+		// test(start, goal, AStart_withDepthUpdate, uniformCostSearch, manhattanDistance);
 	}
 	else {
 		cout << "Game not solvable" << endl;

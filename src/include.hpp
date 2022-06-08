@@ -29,8 +29,9 @@ Game randomGame(size_t size);
 Game shuffleGame(Game game, size_t shuffleNb);
 Game goalGeneration(size_t size, string type = string());
 
-int manhattanDistance(Game &game, Game &goal);
 int badPlacedTiles(Game &game, Game &goal);
+int manhattanDistance(Game &game, Game &goal);
+int manDist_linCon(Game &game, Game &goal);
 
 bool uniformCostSearch(Node *n1, Node *n2);
 bool greedySearch(Node *n1, Node *n2);

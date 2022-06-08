@@ -32,14 +32,20 @@ bool checkStr(vector<string> tab) {
 Game stringToInt(vector<string> tab) {
 	Game game;
 	game.size = atoi(tab[0].c_str());
+	// cout << "1" << endl;
 	for (size_t i = 1; i < tab.size(); i++) {
+	// cout << "2" << endl;
 		vector<string> rowStr = split(tab[i]);
 		vector<int> row;
+	// cout << "3" << endl;
 		for (size_t j = 0; j < rowStr.size(); j++)
 			row.push_back(atoi(rowStr[j].c_str()));
+	// cout << "4" << endl;
 		game.grid.push_back(row);
 	}
+	// cout << "5" << endl;
 	game.updateEmptyPos();
+	// cout << "6" << endl;
 	return game;
 }
 
@@ -67,6 +73,8 @@ bool checkValue(Game game) {
 bool parseGame(string fileName, Game &game) {
 	// cout << "a" << endl;
 	vector<string> tab = readFile(fileName);
+	if (tab.empty())
+		return false;
 	// cout << "b" << endl;
 	vector<string> tabWithoutComment = filterComment(tab);
 	// cout << "c" << endl;

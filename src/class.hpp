@@ -28,7 +28,7 @@ struct vec2 {
 	void set(int _row, int _col) { row = _row; col = _col; }
 	void add(int _row, int _col) { row += _row; col += _col; }
 	void add(vec2 &v) { row += v.row; col += v.col; }
-	string to_str() { return to_string(col) + " " + to_string(row); }
+	string to_str() { return to_string(row) + " " + to_string(col); }
 }; //npos(-1, -1);
 
 struct Game {
