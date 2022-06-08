@@ -2,7 +2,7 @@
 
 int manhattanDistance(Game &game, Game &goal) {
 	int val = 0;
-	for (int i = 1; i < game.size * game.size; i++) {
+	for (size_t i = 1; i < game.size * game.size; i++) {
 		vec2 pos = game.find(i);
 		vec2 goalPos = goal.find(i);
 		val += abs(pos.row - goalPos.row) + abs(pos.col - goalPos.col);
@@ -12,7 +12,7 @@ int manhattanDistance(Game &game, Game &goal) {
 
 int badPlacedTiles(Game &game, Game &goal) {
 	int val = 0;
-	for (int i = 0; i < game.size * game.size; i++)
+	for (size_t i = 0; i < game.size * game.size; i++)
 		val += (game.at(i) == goal.at(i) ? 0 : 1);
 	return val;
 }

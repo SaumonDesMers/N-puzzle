@@ -14,3 +14,14 @@ void getSolution(Node *n) {
 		n->clear();
 	}
 }
+
+vector<string> split(string str) {
+	vector<string> tab;
+	char *c_str = const_cast<char *>(str.c_str());
+	char *token = strtok(c_str, " ");
+	while(token != NULL) {
+		tab.push_back(token);
+		token = strtok(NULL, " ");
+	}
+	return tab;
+}

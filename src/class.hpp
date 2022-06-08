@@ -35,25 +35,58 @@ struct Game {
 	typedef vector<vector<int> > Grid;
 
 	Grid grid;
-	int size;
+	size_t size;
 	vec2 emptyPos;
 
-	// Game(int _s = 0, Grid _g = Grid()) : grid(_g), size(_s) {
-	// 	for (int i = 0; i < size; i++)
-	// 		grid[i].insert(grid[i].begin(), size, 0);
-	// }
+	Game() {}
+	Game(Game const &src) : grid(src.grid), size(src.size), emptyPos(src.emptyPos) {}
+	Game(Grid _g) : grid(_g), size(_g.size()) {
+		updateEmptyPos();
+	}
 	Game(vector<int> tab) : size(sqrt(tab.size())) {
-		for (int row = 0; row < size; row++) {
+		for (size_t row = 0; row < size; row++) {
 			grid.push_back(vector<int>());
-			for (int col = 0; col < size; col++) {
+			for (size_t col = 0; col < size; col++) {
 				grid[row].push_back(tab[row * size + col]);
 				if (tab[row * size + col] == 0)
 					emptyPos.set(row, col);
 			}
 		}
 	}
-	Game(Game const &src) : grid(src.grid), size(src.size), emptyPos(src.emptyPos) {}
-	Game operator=(Game const &src) { grid = src.grid; size = src.size; emptyPos = src.emptyPos; return *this; }
+	
+	Game operator=(Game const &src) {
+		grid = src.grid;
+		size = src.size;
+		emptyPos = src.emptyPos;
+		return *this;
+	}
+	Game operator=(Grid _g) {
+		grid = _g;
+		size = _g.size();
+		updateEmptyPos();
+		return *this;
+	}
+	Game operator=(vector<int> tab) {
+		size = sqrt(tab.size());
+		for (size_t row = 0; row < size; row++) {
+			grid.push_back(vector<int>());
+			for (size_t col = 0; col < size; col++) {
+				grid[row].push_back(tab[row * size + col]);
+				if (tab[row * size + col] == 0)
+					emptyPos.set(row, col);
+			}
+		}
+		return *this;
+	}
+
+	void updateEmptyPos() {
+		for (size_t row = 0; row < size; row++) {
+			for (size_t col = 0; col < size; col++) {
+				if (grid[row][col] == 0)
+					emptyPos.set(row, col);
+			}
+		}
+	}
 
 	int &at(vec2 pos) {
 		return grid[pos.row][pos.col];
@@ -64,7 +97,7 @@ struct Game {
 	}
 
 	bool outOfBound(vec2 pos) {
-		return pos.row < 0 || pos.row >= size || pos.col < 0 || pos.col >= size;
+		return pos.row < 0 || pos.row >= static_cast<int>(size) || pos.col < 0 || pos.col >= static_cast<int>(size);
 	}
 
 	vector<Game> getNextTurns() {
@@ -87,8 +120,8 @@ struct Game {
 	}
 
 	vec2 find(int val) {
-		for (int row = 0; row < size; row++) {
-			for (int col = 0; col < size; col++) {
+		for (size_t row = 0; row < size; row++) {
+			for (size_t col = 0; col < size; col++) {
 				if (grid[row][col] == val)
 					return vec2(row, col);
 			}
@@ -97,8 +130,8 @@ struct Game {
 	}
 
 	void print() {
-		for (int row = 0; row < size; row++) {
-			for (int col = 0; col < size; col++) {
+		for (size_t row = 0; row < size; row++) {
+			for (size_t col = 0; col < size; col++) {
 				cout << setw(3) << grid[row][col];
 			}
 			cout << endl;
@@ -107,7 +140,7 @@ struct Game {
 
     vector<int> toTab() {
         vector<int> tab;
-        for (int i = 0; i < size; i++)
+        for (size_t i = 0; i < size; i++)
             tab.insert(tab.end(), grid[i].begin(), grid[i].end());
         return tab;
     }
