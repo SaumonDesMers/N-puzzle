@@ -12,6 +12,19 @@
 
 using namespace std;
 
+struct Config {
+    algo_fct algo;
+	int maxIter;
+	int weight;
+	sort_fct sortSearch;
+	heuristique_fct h;
+
+	string goal_fileName;
+	string start_fileName;
+	Game goal;
+	Game start;
+};
+
 struct vec2 {
 	int row; int col;
 	vec2(int _row = 0, int _col = 0) : row(_row), col(_col) {}
