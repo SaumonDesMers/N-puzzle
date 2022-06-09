@@ -32,6 +32,7 @@ Game goalGeneration(size_t size, string type = string());
 int badPlacedTiles(Game &game, Game &goal);
 int manhattanDistance(Game &game, Game &goal);
 int manDist_linCon(Game &game, Game &goal);
+int linearConflict(Game &game, Game &goal);
 
 bool uniformCostSearch(Node *n1, Node *n2);
 bool greedySearch(Node *n1, Node *n2);

@@ -19,6 +19,7 @@ int manhattanDistance(Game &game, Game &goal) {
 
 int linearConflict(Game &game, Game &goal) {
 	int count = 0;
+	vector<vector<vec2>> goalPos;
 	// for each tiles
 	for (size_t i = 1; i < game.size * game.size; i++) {
 		vec2 pos = game.find(i);

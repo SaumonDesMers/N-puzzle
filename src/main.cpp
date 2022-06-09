@@ -36,17 +36,17 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 
-	Game goal = goalGeneration(start.size);
+	Game goal = goalGeneration(start.size, "snail");
 
-	if (isSolvable(start, goal)) {
-		cout << "Start solving..." << endl;
-		test(start, goal, AStart, uniformCostSearch, manhattanDistance);
-		test(start, goal, AStart, uniformCostSearch, manDist_linCon);
-		// test(start, goal, AStart_withDepthUpdate, uniformCostSearch, manhattanDistance);
-	}
-	else {
-		cout << "Game not solvable" << endl;
-	}
+	// if (isSolvable(start, goal)) {
+	// 	cout << "Start solving..." << endl;
+	// 	test(start, goal, AStart, uniformCostSearch, manhattanDistance);
+	// 	test(start, goal, AStart, uniformCostSearch, manDist_linCon);
+	// 	// test(start, goal, AStart_withDepthUpdate, uniformCostSearch, manhattanDistance);
+	// }
+	// else {
+	// 	cout << "Game not solvable" << endl;
+	// }
 	
 	return 0;
 }
