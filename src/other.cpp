@@ -15,13 +15,13 @@ void getSolution(Node *n) {
 	}
 }
 
-vector<string> split(string str) {
+vector<string> split(string str, string delim) {
 	vector<string> tab;
 	char *c_str = const_cast<char *>(str.c_str());
-	char *token = strtok(c_str, " ");
+	char *token = strtok(c_str, delim.c_str());
 	while(token != NULL) {
 		tab.push_back(token);
-		token = strtok(NULL, " ");
+		token = strtok(NULL, delim.c_str());
 	}
 	return tab;
 }

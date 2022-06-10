@@ -15,14 +15,11 @@
 
 using namespace std;
 
-typedef int (*heuristique_fct)(Game &, Game &);
-typedef bool (*sort_fct)(Node *n1, Node *n2);
-typedef Node *(*algo_fct)(Game start, Game goal, sort_fct sort, int (*h)(Game &, Game &), int nb);
+struct Config;
 
 bool parseGame(string fileName, Game &game);
 
-Node *AStart(Game start, Game goal, sort_fct sort, heuristique_fct h, int maxIter = -1);
-Node *AStart_withDepthUpdate(Game start, Game goal, sort_fct sort, heuristique_fct h, int maxIter = -1);
+Node *AStart(Config cfg);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 
@@ -40,6 +37,6 @@ bool greedySearch(Node *n1, Node *n2);
 
 void printTab(vector<int> tab, string sep = string());
 void getSolution(Node *n);
-vector<string> split(string str);
+vector<string> split(string str, string delim);
 
 #endif

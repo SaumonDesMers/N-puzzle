@@ -9,21 +9,18 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <map>
 
 using namespace std;
 
-struct Config {
-    algo_fct algo;
-	int maxIter;
-	int weight;
-	sort_fct sortSearch;
-	heuristique_fct h;
+struct vec2;
+struct Game;
+struct Node;
+struct Config;
 
-	string goal_fileName;
-	string start_fileName;
-	Game goal;
-	Game start;
-};
+typedef int (*heuristique_fct)(Game &, Game &);
+typedef bool (*sort_fct)(Node *n1, Node *n2);
+typedef Node *(*algo_fct)(Config cfg);
 
 struct vec2 {
 	int row; int col;

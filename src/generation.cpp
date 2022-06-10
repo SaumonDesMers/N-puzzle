@@ -42,6 +42,8 @@ Game goalGeneration(size_t size, string type) {
             case 4: return Game({1,2,3,4,12,13,14,5,11,0,15,6,10,9,8,7});
         }
     }
+    if (type == "random")
+        return randomGame(size);
     vector<int> tab(size * size, 0);
     for (size_t i = 0; i + 1 < tab.size(); i++)
         tab[i] = i + 1;

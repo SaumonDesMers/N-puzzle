@@ -24,9 +24,9 @@ vector<string> filterComment(vector<string> tab) {
 bool checkStr(vector<string> tab) {
 	for (size_t i = 0; i < tab.size(); i++) {
 		if (tab[i].find_first_not_of("0123456789 ") != string::npos)
-			return false;
+			return EXIT_FAILURE;
 	}
-	return true;
+	return EXIT_SUCCESS;
 }
 
 Game stringToInt(vector<string> tab) {
@@ -35,7 +35,7 @@ Game stringToInt(vector<string> tab) {
 	// cout << "1" << endl;
 	for (size_t i = 1; i < tab.size(); i++) {
 	// cout << "2" << endl;
-		vector<string> rowStr = split(tab[i]);
+		vector<string> rowStr = split(tab[i], " ");
 		vector<int> row;
 	// cout << "3" << endl;
 		for (size_t j = 0; j < rowStr.size(); j++)
@@ -52,10 +52,10 @@ Game stringToInt(vector<string> tab) {
 bool checkValue(Game game) {
 	Game::Grid grid = game.grid;
 	if (grid.size() != game.size)
-		return false;
+		return EXIT_FAILURE;
 	for (size_t row = 0; row < game.size; row++) {
 		if (grid[row].size() != game.size)
-			return false;
+			return EXIT_FAILURE;
 	}
 	vector<bool> value(grid.size() * grid.size());
 	for (size_t row = 0; row < grid.size(); row++) {
@@ -67,25 +67,25 @@ bool checkValue(Game game) {
 	// for (size_t i = 0; i < value.size(); i++)
 	// 	cout << value[i] << " ";
 	// cout << endl;
-	return all_of(value.begin(), value.end(), [](bool b) { return b; });
+	return all_of(value.begin(), value.end(), [](bool b) { return b; }) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 bool parseGame(string fileName, Game &game) {
 	// cout << "a" << endl;
 	vector<string> tab = readFile(fileName);
-	if (tab.empty())
-		return false;
+	if (tab.empty() == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	// cout << "b" << endl;
 	vector<string> tabWithoutComment = filterComment(tab);
 	// cout << "c" << endl;
-	if (!checkStr(tabWithoutComment))
-		return false;
+	if (checkStr(tabWithoutComment) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	// cout << "d" << endl;
 	game = stringToInt(tabWithoutComment);
 	// cout << "e" << endl;
 	// game.print();
-	if (!checkValue(game))
-		return false;
+	if (checkValue(game) == EXIT_FAILURE)
+		return EXIT_FAILURE;
 	// cout << "f" << endl;
-	return true;
+	return EXIT_SUCCESS;
 }
