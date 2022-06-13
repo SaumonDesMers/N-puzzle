@@ -159,6 +159,14 @@ struct Game {
         return toTab();
     }
 
+	operator string() {
+		string ret;
+		vector<int> tab = toTab();
+		for (size_t i = 0; i < tab.size(); i++)
+			ret += to_string(tab[i]);
+        return ret;
+    }
+
 };
 
 struct Node {

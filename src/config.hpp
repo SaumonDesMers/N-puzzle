@@ -42,8 +42,8 @@ struct Config {
 			string val = it->second;
 
 			if (key == "algorithme") {
-				if (val == "AStart")
-					algo = AStart;
+				if (val == "AStar")
+					algo = AStar;
 			}
 			else if (key == "maxIteration") {
 				maxIter = atoi(val.c_str());

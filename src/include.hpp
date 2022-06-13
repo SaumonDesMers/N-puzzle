@@ -19,7 +19,7 @@ struct Config;
 
 bool parseGame(string fileName, Game &game);
 
-Node *AStart(Config cfg);
+Node *AStar(Config cfg);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 

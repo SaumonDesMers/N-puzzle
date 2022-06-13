@@ -5,8 +5,8 @@ CFLAGS		= -g -Wall -Wextra -Werror -std=c++11
 NAME		= solver
 
 SRC_DIR		= src
-SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing_game.cpp astart.cpp generation.cpp \
-				solvability.cpp heuristique.cpp other.cpp)
+SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing_game.cpp astar.cpp generation.cpp \
+				solvability.cpp heuristique.cpp other.cpp idastar.cpp)
 HEADER_DIR	= include
 
 OBJ_DIR		= obj
