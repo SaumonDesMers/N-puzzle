@@ -3,22 +3,61 @@
 
 #define FOUND -1
 
-Node *IDAStar(Config cfg) {
-	int limit = cfg.h(cfg.start, cfg.goal);
-	int i = 0;
-	Node *start = new Node(cfg.start);
-	Node *goal = new Node(cfg.goal);
-	for (; i < cfg.maxIter; i++) {
-		int tmp = recusiveSearch(start, goal, 0, limit, cfg.h);
-		if (tmp == FOUND)
-			return NULL; // FOUND
-		limit = tmp;
-	}
-}
+Node *solution = NULL;
 
-int recusiveSearch(Node *current, Node *goal, int g, int limit, heuristique_fct h) {
-	int f = g + h(current->game, goal->game);
+int recusiveSearch(Node *current, int g, int limit, Config cfg) {
+	static unordered_map<string, Node *> explored;
+	unordered_map<string, Node *>::iterator it = explored.find(current->game);
+	if (it == explored.end()) {
+		current->HCost = cfg.h(current->game, cfg.goal);
+		current->expand();
+		explored[current->game] = current;
+	}
+	else {
+		current = it->second;
+	}
+
+	int f = g + current->HCost;
+
 	if (f > limit)
 		return f;
 	
+	if (current->HCost == 0) {
+		solution = current;
+		return FOUND;
+	}
+	
+	int minLimit = INT_MAX;
+	for (size_t i = 0; i < current->childs.size(); i++) {
+		int tmp = recusiveSearch(current->childs[i], g + 1, limit, cfg);
+		if (tmp == FOUND)
+			return FOUND;
+		minLimit = min(minLimit, tmp);
+	}
+	return minLimit;
+}
+
+Node *IDAStar(Config cfg) {
+    cout << "------- IDAStar -------" << endl;
+
+	auto start = chrono::system_clock::now();
+	auto end = chrono::system_clock::now();
+
+	int limit = cfg.h(cfg.start, cfg.goal);
+	int i = 0;
+	Node *root = new Node(cfg.start);
+	for (; i < cfg.maxIter; i++) {
+		int tmp = recusiveSearch(root, 0, limit, cfg);
+		if (tmp == FOUND)
+			break;
+		limit = tmp;
+	}
+
+	end = chrono::system_clock::now();
+
+	cout << "Iteration count = " << i << endl;
+	getSolution(solution);
+	printTime(end-start, "execution time = ");
+    cout << "------------------------" << endl;
+	return solution;
 }

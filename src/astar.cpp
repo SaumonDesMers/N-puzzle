@@ -1,11 +1,5 @@
 #include "include.hpp"
 #include "config.hpp"
-#include <chrono>
-#include <unordered_map>
-
-void printTime(chrono::duration<double> elapsed_seconds, string msg) {
-	cout << msg << elapsed_seconds.count() << "s" << endl;
-}
 
 Node *AStar(Config cfg) {
     cout << "-------- AStar --------" << endl;
@@ -14,11 +8,8 @@ Node *AStar(Config cfg) {
 	Node *root = new Node(cfg.start);
     Node *current = NULL;
 
-	// auto start = chrono::system_clock::now();
-	// auto end = chrono::system_clock::now();
-	// start = chrono::system_clock::now();
-	// end = chrono::system_clock::now();
-	// printTime(end-start, "expand: ");
+	auto start = chrono::system_clock::now();
+	auto end = chrono::system_clock::now();
 
 	root->HCost = cfg.h(root->game, cfg.goal) * cfg.weight;
 	open.insert(make_pair(root->HCost, root));
@@ -56,12 +47,15 @@ Node *AStar(Config cfg) {
 	}
     if (i == cfg.maxIter) { current = NULL; }
 
+	end = chrono::system_clock::now();
+
     // cout << "Opened nodes = " << open.size() << endl;
     // cout << "Closed nodes = " << close.size() << endl;
     cout << "Total nodes = " << close.size() + open.size() << endl;
     cout << "Iteration count = " << i << endl;
 	getSolution(current);
+	printTime(end-start, "execution time = ");
     cout << "------------------------" << endl;
 
-	return current;
+	return NULL;
 }

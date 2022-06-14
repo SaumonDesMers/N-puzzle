@@ -25,3 +25,7 @@ vector<string> split(string str, string delim) {
 	}
 	return tab;
 }
+
+void printTime(chrono::duration<double> time, string msg) {
+	cout << msg << setprecision(3) << time.count() << "s" << endl;
+}

@@ -16,8 +16,10 @@ void exec(Config config) {
 int main()
 {
 	Config config;
-	if (config.load() == EXIT_FAILURE)
+	if (config.load() == EXIT_FAILURE) {
+		cout << "Error" << endl;
 		return 1;
+	}
 
 	if (isSolvable(config.start, config.goal))
 		exec(config);

@@ -44,6 +44,12 @@ struct Config {
 			if (key == "algorithme") {
 				if (val == "AStar")
 					algo = AStar;
+				else if (val == "IDAStar")
+					algo = IDAStar;
+				else if (val == "iterativeBrainless")
+					algo = iterativeBrainless;
+				else if (val == "recursiveBrainless")
+					algo = recursiveBrainless;
 			}
 			else if (key == "maxIteration") {
 				maxIter = atoi(val.c_str());
@@ -66,11 +72,18 @@ struct Config {
 					h = manDist_linCon;
 			}
 			else if (key == "start") {
-				if (parseGame(val, start) == EXIT_FAILURE) {
-					cout << "There is a problem with the input file" << endl;
-					return EXIT_FAILURE;
+				vector<string> arg = split(val, ":");
+				if (arg.size() == 1) {
+					if (parseGame(val, start) == EXIT_FAILURE)
+						return EXIT_FAILURE;
+					size = start.size;
 				}
-				size = start.size;
+				else if (arg.size() == 2 && arg[0] == "random") {
+					size = atoi(arg[1].c_str());
+					start = randomGame(size);
+				}
+				else
+					return EXIT_FAILURE;
 			}
 			else if (key == "goal") {
 				if (size == 0)

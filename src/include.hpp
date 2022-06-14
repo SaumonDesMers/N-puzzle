@@ -11,6 +11,9 @@
 #include <cstring>
 #include <fstream>
 #include <sstream>
+#include <chrono>
+#include <unordered_map>
+#include <climits>
 #include "class.hpp"
 
 using namespace std;
@@ -20,6 +23,9 @@ struct Config;
 bool parseGame(string fileName, Game &game);
 
 Node *AStar(Config cfg);
+Node *IDAStar(Config cfg);
+Node *iterativeBrainless(Config cfg);
+Node *recursiveBrainless(Config cfg);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 
@@ -38,5 +44,6 @@ bool greedySearch(Node *n1, Node *n2);
 void printTab(vector<int> tab, string sep = string());
 void getSolution(Node *n);
 vector<string> split(string str, string delim);
+void printTime(chrono::duration<double> elapsed_seconds, string msg);
 
 #endif
