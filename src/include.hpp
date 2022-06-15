@@ -45,5 +45,6 @@ void printTab(vector<int> tab, string sep = string());
 void getSolution(Node *n);
 vector<string> split(string str, string delim);
 void printTime(chrono::duration<double> elapsed_seconds, string msg);
+void printTree(Node* node);
 
 #endif

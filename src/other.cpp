@@ -29,3 +29,16 @@ vector<string> split(string str, string delim) {
 void printTime(chrono::duration<double> time, string msg) {
 	cout << msg << setprecision(3) << time.count() << "s" << endl;
 }
+
+void printTree(string prefix, Node* node) {
+	for (size_t i = 0; i < node->childs.size(); i++) {
+		bool isLast = i == (node->childs.size() - 1);
+		cout << prefix << (!isLast ? "├─" : "└─" ) << node->childs[i]->HCost << endl;
+		printTree(prefix + (isLast ? "  " : "| "), node->childs[i]);
+	}
+}
+
+void printTree(Node* node) {
+	cout << node->HCost << endl;
+    printTree("", node);
+}
