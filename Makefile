@@ -16,7 +16,7 @@ DEP			= $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
 $(NAME):	$(OBJ)
 			$(CC) $(CFLAGS) $(OBJ) -o $@
-			@echo "$(Green)*** $(UGreen)Successfully compiled $(NAME)$(Green) ***$(nc)"
+			@echo -e "$(Green)*** $(UGreen)Successfully compiled $(NAME)$(Green) ***$(nc)"
 
 -include $(DEP)
 
@@ -30,11 +30,11 @@ $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp
 all:		$(NAME)
 
 clean:
-			@echo "$(BRed)/!\\ $(BYellow)Remove containers obj and dep$(BRed) /!\\ $(nc)"
+			@echo -e "$(BRed)/!\\ $(BYellow)Remove containers obj and dep$(BRed) /!\\ $(nc)"
 			@$(RM) $(OBJ) $(DEP)
 
 fclean:		clean
-			@echo "$(BRed)/!\\ $(BYellow)Remove $(NAME)$(BRed) /!\\ $(nc)"
+			@echo -e "$(BRed)/!\\ $(BYellow)Remove $(NAME)$(BRed) /!\\ $(nc)"
 			@$(RM) $(NAME)
 
 re:			fclean
