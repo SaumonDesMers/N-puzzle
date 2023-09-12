@@ -28,7 +28,7 @@ int linearConflict(Game &game, Game &goal) {
 		if (pos.row == goalPos.row/* && pos.col != goalPos.col*/) {
 			// for each neighbour tiles at his right
 			for (size_t col = pos.col + 1; col < game.size; col++) {
-				int n = game.grid[pos.row][col];
+				int n = game.grid[pos.row * game.size + col];
 				// pass if neighbour is the empty tile
 				if (n == 0)
 					continue;
@@ -42,7 +42,7 @@ int linearConflict(Game &game, Game &goal) {
 		if (pos.col == goalPos.col/* && pos.row != goalPos.row*/) {
 			// for each neighbour tiles below it
 			for (size_t row = pos.row + 1; row < game.size; row++) {
-				int n = game.grid[row][pos.col];
+				int n = game.grid[row * game.size + pos.col];
 				// pass if neighbour is the empty tile
 				if (n == 0)
 					continue;

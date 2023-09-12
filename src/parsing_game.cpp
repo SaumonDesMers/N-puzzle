@@ -29,45 +29,42 @@ bool checkStr(vector<string> tab) {
 	return EXIT_SUCCESS;
 }
 
-Game stringToInt(vector<string> tab) {
-	Game game;
-	game.size = atoi(tab[0].c_str());
+vector<int> stringToInt(vector<string> lines) {
+	vector<int> grid;
+	size_t size = atoi(lines[0].c_str());
 	// cout << "1" << endl;
-	for (size_t i = 1; i < tab.size(); i++) {
-	// cout << "2" << endl;
-		vector<string> rowStr = split(tab[i], " ");
+
+	// check number of row
+	if (size != lines.size() - 1)
+		return grid;
+
+	for (size_t i = 1; i < lines.size(); i++) {
+		// cout << "2" << endl;
+		vector<string> rowStr = split(lines[i], " ");
+
+		// check number of value per row
+		if (rowStr.size() != size) {
+			grid.clear();
+			break;
+		}
+
 		vector<int> row;
-	// cout << "3" << endl;
+		// cout << "3" << endl;
 		for (size_t j = 0; j < rowStr.size(); j++)
 			row.push_back(atoi(rowStr[j].c_str()));
-	// cout << "4" << endl;
-		game.grid.push_back(row);
+		// cout << "4" << endl;
+		grid.insert(grid.end(), row.begin(), row.end());
 	}
-	// cout << "5" << endl;
-	game.updateEmptyPos();
 	// cout << "6" << endl;
-	return game;
+	return grid;
 }
 
-bool checkValue(Game game) {
-	Game::Grid grid = game.grid;
-	if (grid.size() != game.size)
-		return EXIT_FAILURE;
-	for (size_t row = 0; row < game.size; row++) {
-		if (grid[row].size() != game.size)
+bool checkValue(vector<int> grid) {
+	for (size_t i = 0; i < grid.size(); i++) {
+		if (grid[i] < 0 && grid[i] > static_cast<int>(grid.size() - 1))
 			return EXIT_FAILURE;
 	}
-	vector<bool> value(grid.size() * grid.size());
-	for (size_t row = 0; row < grid.size(); row++) {
-		for (size_t col = 0; col < grid.size(); col++) {
-			if (grid[row][col] >= 0 && grid[row][col] < static_cast<int>(value.size()))
-				value[grid[row][col]] = true;
-		}
-	}
-	// for (size_t i = 0; i < value.size(); i++)
-	// 	cout << value[i] << " ";
-	// cout << endl;
-	return all_of(value.begin(), value.end(), [](bool b) { return b; }) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 
 bool parseGame(string fileName, Game &game) {
@@ -81,11 +78,18 @@ bool parseGame(string fileName, Game &game) {
 	if (checkStr(tabWithoutComment) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	// cout << "d" << endl;
-	game = stringToInt(tabWithoutComment);
+	vector<int> grid = stringToInt(tabWithoutComment);
+
+	if (grid.size() == 0)
+		return EXIT_FAILURE;
 	// cout << "e" << endl;
 	// game.print();
-	if (checkValue(game) == EXIT_FAILURE)
+	if (checkValue(grid) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	// cout << "f" << endl;
+
+	game = grid;
+	// cout << "g" << endl;
+	// game.print();
 	return EXIT_SUCCESS;
 }

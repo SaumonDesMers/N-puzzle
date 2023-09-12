@@ -105,11 +105,11 @@ struct Config {
 		cout << "Start:" << string(size + 6, ' ') << "Goal:" << endl;
 		for (size_t row = 0; row < size; row++) {
 			for (size_t col = 0; col < size; col++) {
-				cout << setw(3) << start.grid[row][col];
+				cout << setw(3) << start.grid[row * size + col];
 			}
 			cout << "    ";
 			for (size_t col = 0; col < size; col++) {
-				cout << setw(3) << start.grid[row][col];
+				cout << setw(3) << goal.grid[row * size + col];
 			}
 			cout << endl;
 		}

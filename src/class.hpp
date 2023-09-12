@@ -42,68 +42,75 @@ struct vec2 {
 }; //npos(-1, -1);
 
 struct Game {
-	typedef vector<vector<int> > Grid;
+	typedef int* Grid;
 
 	Grid grid;
 	size_t size;
-	vec2 emptyPos;
+	size_t emptyPos;
 
-	Game() {}
-	Game(Game const &src) : grid(src.grid), size(src.size), emptyPos(src.emptyPos) {}
-	Game(Grid _g) : grid(_g), size(_g.size()) {
-		updateEmptyPos();
+    string hashKey;
+
+	Game() : grid(NULL) {}
+	Game(Game const &src) : size(src.size), emptyPos(src.emptyPos), hashKey(src.hashKey) {
+        grid = new int[size * size];
+        for (size_t i=0; i < size * size; i++)
+            grid[i] = src.grid[i];
+    }
+	Game(Grid _g, size_t _size) : size(_size) {
+        grid = new int[size * size];
+        for (size_t i=0; i < size * size; i++) {
+            grid[i] = _g[i];
+			if (grid[i] == 0)
+				emptyPos = i;
+		}
 	}
 	Game(vector<int> tab) : size(sqrt(tab.size())) {
-		for (size_t row = 0; row < size; row++) {
-			grid.push_back(vector<int>());
-			for (size_t col = 0; col < size; col++) {
-				grid[row].push_back(tab[row * size + col]);
-				if (tab[row * size + col] == 0)
-					emptyPos.set(row, col);
-			}
+        grid = new int[size * size];
+		for (size_t i = 0; i < size * size; i++) {
+			grid[i] = tab[i];
+			if (grid[i] == 0)
+				emptyPos = i;
 		}
+	}
+
+	~Game() {
+		delete[] grid;
 	}
 	
 	Game operator=(Game const &src) {
-		grid = src.grid;
+		delete[] grid;
 		size = src.size;
+		grid = new int[size * size];
+        for (size_t i=0; i < size * size; i++)
+            grid[i] = src.grid[i];
 		emptyPos = src.emptyPos;
 		return *this;
 	}
-	Game operator=(Grid _g) {
-		grid = _g;
-		size = _g.size();
-		updateEmptyPos();
-		return *this;
-	}
 	Game operator=(vector<int> tab) {
+		delete[] grid;
 		size = sqrt(tab.size());
-		for (size_t row = 0; row < size; row++) {
-			grid.push_back(vector<int>());
-			for (size_t col = 0; col < size; col++) {
-				grid[row].push_back(tab[row * size + col]);
-				if (tab[row * size + col] == 0)
-					emptyPos.set(row, col);
-			}
+		grid = new int[tab.size()];
+		for (size_t i = 0; i < tab.size(); i++) {
+			grid[i] = tab[i];
+			if (grid[i] == 0)
+				emptyPos = i;
 		}
 		return *this;
 	}
 
 	void updateEmptyPos() {
-		for (size_t row = 0; row < size; row++) {
-			for (size_t col = 0; col < size; col++) {
-				if (grid[row][col] == 0)
-					emptyPos.set(row, col);
-			}
+		for (size_t i = 0; i < size; i++) {
+			if (grid[i] == 0)
+				emptyPos = i;
 		}
 	}
 
 	int &at(vec2 pos) {
-		return grid[pos.row][pos.col];
+		return grid[pos.row * size + pos.col];
 	}
 
-	int &at(int pos) {
-		return grid[pos / size][pos % size];
+	int &at(size_t pos) {
+		return grid[pos];
 	}
 
 	bool outOfBound(vec2 pos) {
@@ -112,29 +119,29 @@ struct Game {
 
 	vector<Game> getNextTurns() {
 		vector<Game> nextTurns;
-		vector<vec2> nextEmptyPos = {
-			vec2(emptyPos.row, emptyPos.col + 1),
-			vec2(emptyPos.row, emptyPos.col - 1),
-			vec2(emptyPos.row + 1, emptyPos.col),
-			vec2(emptyPos.row - 1, emptyPos.col)
-		};
-		for (size_t i = 0; i < 4; i++) {
-			if (!outOfBound(nextEmptyPos[i])) {
-				Game nextTurn(*this);
-				swap(nextTurn.at(nextTurn.emptyPos), nextTurn.at(nextEmptyPos[i]));
-				nextTurn.emptyPos = nextEmptyPos[i];
-				nextTurns.push_back(nextTurn);
-			}
+		vector<size_t> nextEmptyPos;
+
+		size_t emptyPos_row = emptyPos / size;
+		size_t emptyPos_col = emptyPos % size;
+
+		if (emptyPos_row > 0) nextEmptyPos.push_back(emptyPos - size);
+		if (emptyPos_row < size - 1) nextEmptyPos.push_back(emptyPos + size);
+		if (emptyPos_col > 0) nextEmptyPos.push_back(emptyPos - 1);
+		if (emptyPos_col < size - 1) nextEmptyPos.push_back(emptyPos + 1);
+
+		for (size_t i = 0; i < nextEmptyPos.size(); i++) {
+			Game nextTurn(*this);
+			swap(nextTurn.at(nextTurn.emptyPos), nextTurn.at(nextEmptyPos[i]));
+			nextTurn.emptyPos = nextEmptyPos[i];
+			nextTurns.push_back(nextTurn);
 		}
 		return nextTurns;
 	}
 
 	vec2 find(int val) {
-		for (size_t row = 0; row < size; row++) {
-			for (size_t col = 0; col < size; col++) {
-				if (grid[row][col] == val)
-					return vec2(row, col);
-			}
+		for (size_t i = 0; i < size * size; i++) {
+			if (grid[i] == val)
+				return vec2(i / size, i % size);
 		}
 		return vec2(-1, -1);
 	}
@@ -142,7 +149,7 @@ struct Game {
 	void print() {
 		for (size_t row = 0; row < size; row++) {
 			for (size_t col = 0; col < size; col++) {
-				cout << setw(3) << grid[row][col];
+				cout << setw(3) << grid[row * size + col];
 			}
 			cout << endl;
 		}
@@ -150,8 +157,9 @@ struct Game {
 
     vector<int> toTab() {
         vector<int> tab;
-        for (size_t i = 0; i < size; i++)
-            tab.insert(tab.end(), grid[i].begin(), grid[i].end());
+        // tab.insert(tab.end(), grid[0], grid[size * size]);
+		for (size_t i = 0; i < size * size; i++)
+			tab.push_back(grid[i]);
         return tab;
     }
 
@@ -161,9 +169,8 @@ struct Game {
 
 	operator string() {
 		string ret;
-		vector<int> tab = toTab();
-		for (size_t i = 0; i < tab.size(); i++)
-			ret += to_string(tab[i]);
+		for (size_t i = 0; i < size * size; i++)
+			ret += to_string(grid[i]);
         return ret;
     }
 
