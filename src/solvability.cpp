@@ -31,9 +31,9 @@ static int emptyPosFromBottom(vector<int> tab) {
 }
 
 bool isSolvable(vector<int> game, vector<int> goal) {
-    int inversionNb = countInversion(game, goal);
+    int inversionCount = countInversion(game, goal);
     int emptyPos = emptyPosFromBottom(game);
     int size = sqrt(game.size());
-    return (size % 2 == 0 && emptyPos % 2 != inversionNb % 2)
-        || (size % 2 == 1 && inversionNb % 2 == 0);
+    return (size % 2 == 0 && emptyPos % 2 == inversionCount % 2)
+        || (size % 2 == 1 && inversionCount % 2 == 0);
 }

@@ -22,7 +22,7 @@ Node *AStar(Config cfg) {
 		// system("clear");
 		current = open.begin()->second;
 		open.erase(open.begin());
-		close[current->game] = current;
+		close[current->game.hashKey] = current;
 
 		if (current->HCost == 0)
 			break;
@@ -30,7 +30,7 @@ Node *AStar(Config cfg) {
 		vector<Game> nextTurns = current->game.getNextTurns();
 
 		for (size_t i = 0; i < nextTurns.size(); i++) {
-			unordered_map<string, Node *>::iterator it = close.find(nextTurns[i]);
+			unordered_map<string, Node *>::iterator it = close.find(nextTurns[i].hashKey);
 
 			if (it == close.end()) {
 				Node *child = new Node(nextTurns[i], current, current->depth + 1);

@@ -2,8 +2,7 @@
 #include "config.hpp"
 
 void exec(Config config) {
-	cout << "#########################################\n";
-	config.printGames();
+	
 
 	cout << endl;
 	config.print();
@@ -15,12 +14,18 @@ void exec(Config config) {
 
 int main()
 {
+    srand(time(NULL));
+
 	Config config;
 	if (config.load() == EXIT_FAILURE) {
 		cout << "Error loading config." << endl;
 		return 1;
 	}
-	if (isSolvable(config.start, config.goal))
+
+	cout << "#########################################\n";
+	config.printGames();
+
+	if (isSolvable(config.start.toTab(), config.goal.toTab()))
 		exec(config);
 	else
 		cout << "Game not solvable." << endl;

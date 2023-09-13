@@ -3,3 +3,4 @@ solver
 obj
 dep
 .vscode
+callgrind.out.*

@@ -1,5 +1,5 @@
 CC			= clang++
-CFLAGS		= -g -Wall -Wextra -Werror -std=c++11
+CFLAGS		= -g -Wall -Wextra -Werror -std=c++11 #-Ofast
 # VALGRIND	= valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --show-reachable=yes --log-file=valgrind.log
 
 NAME		= solver

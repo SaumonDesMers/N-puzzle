@@ -37,61 +37,73 @@ struct Config {
 	}
 
 	bool parse() {
-		for (auto it = args.rbegin(); it != args.rend(); it++) {
-			string key = it->first;
-			string val = it->second;
 
-			if (key == "algorithme") {
-				if (val == "AStar")
-					algo = AStar;
-				else if (val == "IDAStar")
-					algo = IDAStar;
-				else if (val == "iterativeBrainless")
-					algo = iterativeBrainless;
-				else if (val == "recursiveBrainless")
-					algo = recursiveBrainless;
-			}
-			else if (key == "maxIteration") {
-				maxIter = atoi(val.c_str());
-			}
-			else if (key == "weight") {
-				weight = atoi(val.c_str());
-			}
-			else if (key == "sortingfFunction") {
-				if (val == "uniformCost")
-					sortSearch = uniformCostSearch;
-				else if (val == "greedy")
-					sortSearch = greedySearch;
-			}
-			else if (key == "heuristique") {
-				if (val == "badPlacedTiles")
-					h = badPlacedTiles;
-				else if (val == "manhattanDistance")
-					h = manhattanDistance;
-				else if (val == "manhattanDistance+linearConflict")
-					h = manDist_linCon;
-			}
-			else if (key == "start") {
-				vector<string> arg = split(val, ":");
-				if (arg.size() == 1) {
-					if (parseGame(val, start) == EXIT_FAILURE)
-						return EXIT_FAILURE;
-					size = start.size;
-				}
-				else if (arg.size() == 2 && arg[0] == "random") {
-					size = atoi(arg[1].c_str());
-					start = randomGame(size);
-				}
-				else
-					return EXIT_FAILURE;
-			}
-			else if (key == "goal") {
-				if (size == 0)
-					return EXIT_FAILURE;
-				goal = goalGeneration(size, val);
-			}
+		if (args.count("algorithme") == 0
+			|| args.count("maxIteration") == 0
+			|| args.count("weight") == 0
+			|| args.count("sortingfFunction") == 0
+			|| args.count("heuristique") == 0
+			|| args.count("start") == 0
+			|| args.count("goal") == 0)
+			return EXIT_FAILURE;
+		
+		string val = args["algorithme"];
+		if (val == "AStar")
+			algo = AStar;
+		else if (val == "IDAStar")
+			algo = IDAStar;
+		else if (val == "iterativeBrainless")
+			algo = iterativeBrainless;
+		else if (val == "recursiveBrainless")
+			algo = recursiveBrainless;
+		else
+			return EXIT_FAILURE;
+		
+		val = args["maxIteration"];
+		maxIter = atoi(val.c_str());
+
+		val = args["weight"];
+		weight = atoi(val.c_str());
+
+		val = args["sortingfFunction"];
+		if (val == "uniformCost")
+			sortSearch = uniformCostSearch;
+		else if (val == "greedy")
+			sortSearch = greedySearch;
+		else
+			return EXIT_FAILURE;
+
+		val = args["heuristique"];
+		if (val == "badPlacedTiles")
+			h = badPlacedTiles;
+		else if (val == "manhattanDistance")
+			h = manhattanDistance;
+		else if (val == "manhattanDistance+linearConflict")
+			h = manDist_linCon;
+		else
+			return EXIT_FAILURE;
+		
+		val = args["start"];
+		vector<string> arg = split(val, ":");
+		val = args["goal"];
+		if (arg.size() == 1) {
+			if (parseGame(arg[0], start) == EXIT_FAILURE)
+				return EXIT_FAILURE;
+			size = start.size;
+			goal = goalGeneration(size, val);
 		}
-		return args.size() == 7 ? EXIT_SUCCESS : EXIT_FAILURE;
+		else if (arg.size() == 2) {
+			size = atoi(arg[1].c_str());
+			goal = goalGeneration(size, val);
+			if (arg[0] == "random")
+				start = randomGame(size);
+			else if (arg[0] == "shuffle")
+				start = shuffleGame(goal, size * 10000);
+		}
+		else
+			return EXIT_FAILURE;
+
+		return EXIT_SUCCESS;
 	}
 
 	void print() {

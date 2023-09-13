@@ -26,9 +26,9 @@ Game randomGame(size_t size) {
 }
 
 Game shuffleGame(Game game, size_t shuffleNb) {
+	cout << "Shuffling game " << shuffleNb << " times..." << endl;
     for (size_t i = 0; i < shuffleNb; i++) {
         vector<Game> childs = game.getNextTurns();
-        srand(time(NULL));
         game = childs[rand() % childs.size()];
     }
     return game;

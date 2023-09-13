@@ -45,64 +45,83 @@ struct Game {
 	typedef int* Grid;
 
 	Grid grid;
+	int *tilesPos;
 	size_t size;
 	size_t emptyPos;
 
-    string hashKey;
+	string hashKey;
 
-	Game() : grid(NULL) {}
+	Game() : grid(NULL), tilesPos(NULL), size(0), emptyPos(0), hashKey("") {}
+
 	Game(Game const &src) : size(src.size), emptyPos(src.emptyPos), hashKey(src.hashKey) {
-        grid = new int[size * size];
-        for (size_t i=0; i < size * size; i++)
-            grid[i] = src.grid[i];
-    }
-	Game(Grid _g, size_t _size) : size(_size) {
-        grid = new int[size * size];
-        for (size_t i=0; i < size * size; i++) {
-            grid[i] = _g[i];
-			if (grid[i] == 0)
-				emptyPos = i;
+
+		grid = new int[size * size];
+		tilesPos = new int[size * size];
+
+		for (size_t i=0; i < size * size; i++) {
+			grid[i] = src.grid[i];
+			tilesPos[grid[i]] = i;
 		}
 	}
+
 	Game(vector<int> tab) : size(sqrt(tab.size())) {
-        grid = new int[size * size];
+
+		grid = new int[size * size];
+		tilesPos = new int[size * size];
+
 		for (size_t i = 0; i < size * size; i++) {
 			grid[i] = tab[i];
+			tilesPos[grid[i]] = i;
 			if (grid[i] == 0)
 				emptyPos = i;
 		}
+
+		setHash();
 	}
 
 	~Game() {
+		clear();
+	}
+
+	void clear() {
 		delete[] grid;
+		delete[] tilesPos;
 	}
 	
 	Game operator=(Game const &src) {
-		delete[] grid;
+		clear();
 		size = src.size;
 		grid = new int[size * size];
-        for (size_t i=0; i < size * size; i++)
-            grid[i] = src.grid[i];
+		tilesPos = new int[size * size];
+		for (size_t i=0; i < size * size; i++) {
+			grid[i] = src.grid[i];
+			tilesPos[grid[i]] = i;
+		}
 		emptyPos = src.emptyPos;
+		hashKey = src.hashKey;
 		return *this;
 	}
 	Game operator=(vector<int> tab) {
-		delete[] grid;
+		clear();
 		size = sqrt(tab.size());
 		grid = new int[tab.size()];
+		tilesPos = new int[size * size];
 		for (size_t i = 0; i < tab.size(); i++) {
 			grid[i] = tab[i];
+			tilesPos[grid[i]] = i;
 			if (grid[i] == 0)
 				emptyPos = i;
 		}
+		setHash();
 		return *this;
 	}
 
-	void updateEmptyPos() {
-		for (size_t i = 0; i < size; i++) {
-			if (grid[i] == 0)
-				emptyPos = i;
-		}
+	void updateTilesPos() {
+		if (tilesPos == NULL)
+			tilesPos = new int[size * size];
+		
+		for (size_t i = 0; i < size * size; i++)
+			tilesPos[grid[i]] = i;
 	}
 
 	int &at(vec2 pos) {
@@ -121,6 +140,9 @@ struct Game {
 		vector<Game> nextTurns;
 		vector<size_t> nextEmptyPos;
 
+		nextTurns.reserve(4);
+		nextEmptyPos.reserve(4);
+
 		size_t emptyPos_row = emptyPos / size;
 		size_t emptyPos_col = emptyPos % size;
 
@@ -132,18 +154,22 @@ struct Game {
 		for (size_t i = 0; i < nextEmptyPos.size(); i++) {
 			Game nextTurn(*this);
 			swap(nextTurn.at(nextTurn.emptyPos), nextTurn.at(nextEmptyPos[i]));
+			nextTurn.updateTilesPos();
 			nextTurn.emptyPos = nextEmptyPos[i];
+			nextTurn.setHash();
 			nextTurns.push_back(nextTurn);
 		}
 		return nextTurns;
 	}
 
 	vec2 find(int val) {
-		for (size_t i = 0; i < size * size; i++) {
-			if (grid[i] == val)
-				return vec2(i / size, i % size);
-		}
-		return vec2(-1, -1);
+		return vec2(tilesPos[val] / size, tilesPos[val] % size);
+	}
+
+	void setHash() {
+		hashKey.clear();
+		for (size_t i = 0; i < size * size; i++)
+			hashKey += static_cast<char>(grid[i]);
 	}
 
 	void print() {
@@ -155,24 +181,13 @@ struct Game {
 		}
 	}
 
-    vector<int> toTab() {
-        vector<int> tab;
-        // tab.insert(tab.end(), grid[0], grid[size * size]);
+	vector<int> toTab() {
+		vector<int> tab;
+		// tab.insert(tab.end(), grid[0], grid[size * size]);
 		for (size_t i = 0; i < size * size; i++)
 			tab.push_back(grid[i]);
-        return tab;
-    }
-
-    operator vector<int>() {
-        return toTab();
-    }
-
-	operator string() {
-		string ret;
-		for (size_t i = 0; i < size * size; i++)
-			ret += to_string(grid[i]);
-        return ret;
-    }
+		return tab;
+	}
 
 };
 
