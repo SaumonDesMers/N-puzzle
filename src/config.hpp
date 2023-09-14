@@ -41,7 +41,7 @@ struct Config {
 		if (args.count("algorithme") == 0
 			|| args.count("maxIteration") == 0
 			|| args.count("weight") == 0
-			|| args.count("sortingfFunction") == 0
+			|| args.count("sortingFunction") == 0
 			|| args.count("heuristique") == 0
 			|| args.count("start") == 0
 			|| args.count("goal") == 0)
@@ -65,7 +65,7 @@ struct Config {
 		val = args["weight"];
 		weight = atoi(val.c_str());
 
-		val = args["sortingfFunction"];
+		val = args["sortingFunction"];
 		if (val == "uniformCost")
 			sortSearch = uniformCostSearch;
 		else if (val == "greedy")
@@ -109,7 +109,7 @@ struct Config {
 	void print() {
 		cout << "algorithme" << " = " << args["algorithme"] << endl;
 		cout << "weight" << " = " << args["weight"] << endl;
-		cout << "sortingfFunction" << " = " << args["sortingfFunction"] << endl;
+		cout << "sortingFunction" << " = " << args["sortingFunction"] << endl;
 		cout << "heuristique" << " = " << args["heuristique"] << endl;
 	}
 

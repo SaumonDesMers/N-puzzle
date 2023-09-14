@@ -38,8 +38,8 @@ int manhattanDistance(Game &game, Game &goal);
 int manDist_linCon(Game &game, Game &goal);
 int linearConflict(Game &game, Game &goal);
 
-bool uniformCostSearch(Node *n1, Node *n2);
-bool greedySearch(Node *n1, Node *n2);
+int uniformCostSearch(Node *n);
+int greedySearch(Node *n);
 
 void printTab(vector<int> tab, string sep = string());
 void getSolution(Node *n);

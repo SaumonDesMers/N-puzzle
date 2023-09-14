@@ -12,7 +12,7 @@ Node *AStar(Config cfg) {
 	auto end = chrono::system_clock::now();
 
 	root->HCost = cfg.h(root->game, cfg.goal) * cfg.weight;
-	open.insert(make_pair(root->HCost, root));
+	open.insert(make_pair(cfg.sortSearch(root), root));
 
     int i = 0;
 	for (; i < cfg.maxIter; i++) {
@@ -37,7 +37,7 @@ Node *AStar(Config cfg) {
 				current->childs.push_back(child);
 
 				child->HCost = cfg.h(child->game, cfg.goal) * cfg.weight;
-				open.insert(make_pair(child->HCost, child));
+				open.insert(make_pair(cfg.sortSearch(child), child));
 			}
 			else if (it->second->depth > current->depth + 1) {
 				it->second->setParent(current);
@@ -48,13 +48,11 @@ Node *AStar(Config cfg) {
             current = NULL;
 			break;
         }
-		// cout << "HCost = " << current->HCost << endl;
 	}
     if (i == cfg.maxIter) { current = NULL; }
 
 	end = chrono::system_clock::now();
 
-	// printTree(root);
     cout << "Opened nodes = " << open.size() << endl;
     cout << "Closed nodes = " << close.size() << endl;
     cout << "Total nodes = " << close.size() + open.size() << endl;
@@ -63,5 +61,6 @@ Node *AStar(Config cfg) {
 	printTime(end-start, "execution time = ");
     cout << "------------------------" << endl;
 
+	root->clear();
 	return NULL;
 }

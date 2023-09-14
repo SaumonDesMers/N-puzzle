@@ -65,10 +65,10 @@ int manDist_linCon(Game &game, Game &goal) {
 	return manhattanDistance(game, goal) + 2 * linearConflict(game, goal);
 }
 
-bool uniformCostSearch(Node *n1, Node *n2) {
-	return n1->depth + n1->HCost > n2->depth + n2->HCost;
+int uniformCostSearch(Node *n) {
+	return n->depth + n->HCost;
 }
 
-bool greedySearch(Node *n1, Node *n2) {
-	return n1->HCost > n2->HCost;
+int greedySearch(Node *n) {
+	return n->HCost;
 }

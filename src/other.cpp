@@ -11,7 +11,6 @@ void getSolution(Node *n) {
 		cout << "No solution found" << endl;
 	else {
 		cout << "Solution found in "<< n->depth << " turn" << endl;
-		n->clear();
 	}
 }
 

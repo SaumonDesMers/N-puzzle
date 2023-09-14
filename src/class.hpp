@@ -19,7 +19,7 @@ struct Node;
 struct Config;
 
 typedef int (*heuristique_fct)(Game &, Game &);
-typedef bool (*sort_fct)(Node *n1, Node *n2);
+typedef int (*sort_fct)(Node *n);
 typedef Node *(*algo_fct)(Config cfg);
 
 struct vec2 {
