@@ -67,7 +67,7 @@ bool checkValue(vector<int> grid) {
 	return EXIT_SUCCESS;
 }
 
-bool parseGame(string fileName, Game &game) {
+bool parseGame(string fileName, Game *&game) {
 	// cout << "a" << endl;
 	vector<string> tab = readFile(fileName);
 	if (tab.empty() == EXIT_FAILURE)
@@ -83,13 +83,13 @@ bool parseGame(string fileName, Game &game) {
 	if (grid.size() == 0)
 		return EXIT_FAILURE;
 	// cout << "e" << endl;
-	// game.print();
+	// game->print();
 	if (checkValue(grid) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	// cout << "f" << endl;
 
-	game = grid;
+	game = new Game(grid);
 	// cout << "g" << endl;
-	// game.print();
+	// game->print();
 	return EXIT_SUCCESS;
 }

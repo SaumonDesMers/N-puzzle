@@ -9,11 +9,11 @@ Node * recursiveBrainless(Node *current, Config cfg) {
 	if (I++ >= cfg.maxIter)
 		return NULL;
 	static unordered_map<string, Node *> explored;
-	unordered_map<string, Node *>::iterator it = explored.find(current->game.hashKey);
+	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
 		current->HCost = cfg.h(current->game, cfg.goal);
 		current->expand();
-		explored[current->game.hashKey] = current;
+		explored[current->game->hashKey] = current;
 	}
 	else
 		return NULL;
@@ -33,7 +33,7 @@ Node * recursiveBrainless(Node *current, Config cfg) {
 	return NULL;
 }
 
-Node *recursiveBrainless(Config cfg) {
+Node *recursiveBrainless(Config &cfg) {
     cout << "------- recusive brainless -------" << endl;
 	Node *root = new Node(cfg.start);
 	Node *n = recursiveBrainless(root, cfg);
@@ -42,7 +42,7 @@ Node *recursiveBrainless(Config cfg) {
 	return NULL;
 }
 
-Node *iterativeBrainless(Config cfg) {
+Node *iterativeBrainless(Config &cfg) {
     cout << "------- iterative brainless -------" << endl;
 	unordered_map<string, Node *> close;
 	Node *root = new Node(cfg.start);
@@ -56,12 +56,12 @@ Node *iterativeBrainless(Config cfg) {
 		if (cfg.h(current->game, cfg.goal) == 0)
 			break;
 		
-		if (close.count(current->game.hashKey) > 0) {
+		if (close.count(current->game->hashKey) > 0) {
 			cout << "Error loop reach" << endl;
 			return NULL;
 		}
 
-		close[current->game.hashKey] = current;
+		close[current->game->hashKey] = current;
 		
 		current->expand();
 		for (size_t i = 0; i < current->childs.size(); i++)

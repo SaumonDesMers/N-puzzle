@@ -1,9 +1,8 @@
 #include "include.hpp"
 #include "config.hpp"
 
-void exec(Config config) {
+void exec(Config &config) {
 	
-
 	cout << endl;
 	config.print();
 	cout << endl;
@@ -25,7 +24,7 @@ int main()
 	cout << "#########################################\n";
 	config.printGames();
 
-	if (isSolvable(config.start.toTab(), config.goal.toTab()))
+	if (isSolvable(config.start->toTab(), config.goal->toTab()))
 		exec(config);
 	else
 		cout << "Game not solvable." << endl;

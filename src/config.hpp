@@ -7,9 +7,17 @@ struct Config {
 	int weight;
 	sort_fct sortSearch;
 	heuristique_fct h;
-	Game goal;
-	Game start;
+	Game *goal;
+	Game *start;
 	size_t size;
+
+	Config() : algo(NULL), maxIter(0), weight(0), sortSearch(NULL), h(NULL), goal(NULL), start(NULL), size(0) {}
+
+	~Config() {
+		cerr << "Config destructor" << endl;
+		delete goal;
+		delete start;
+	}
 
 	bool load() {
 		if (readFile() == EXIT_FAILURE)
@@ -89,7 +97,7 @@ struct Config {
 		if (arg.size() == 1) {
 			if (parseGame(arg[0], start) == EXIT_FAILURE)
 				return EXIT_FAILURE;
-			size = start.size;
+			size = start->size;
 			goal = goalGeneration(size, val);
 		}
 		else if (arg.size() == 2) {
@@ -117,11 +125,11 @@ struct Config {
 		cout << "Start:" << string(size + 6, ' ') << "Goal:" << endl;
 		for (size_t row = 0; row < size; row++) {
 			for (size_t col = 0; col < size; col++) {
-				cout << setw(3) << start.grid[row * size + col];
+				cout << setw(3) << start->grid[row * size + col];
 			}
 			cout << "    ";
 			for (size_t col = 0; col < size; col++) {
-				cout << setw(3) << goal.grid[row * size + col];
+				cout << setw(3) << goal->grid[row * size + col];
 			}
 			cout << endl;
 		}

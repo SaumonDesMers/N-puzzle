@@ -20,23 +20,23 @@ using namespace std;
 
 struct Config;
 
-bool parseGame(string fileName, Game &game);
+bool parseGame(string fileName, Game *&game);
 
-Node *AStar(Config cfg);
-Node *IDAStar(Config cfg);
-Node *iterativeBrainless(Config cfg);
-Node *recursiveBrainless(Config cfg);
+Node *AStar(Config &cfg);
+Node *IDAStar(Config &cfg);
+Node *iterativeBrainless(Config &cfg);
+Node *recursiveBrainless(Config &cfg);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 
-Game randomGame(size_t size);
-Game shuffleGame(Game game, size_t shuffleNb);
-Game goalGeneration(size_t size, string type = string());
+Game * randomGame(size_t size);
+Game * shuffleGame(Game * game, size_t shuffleNb);
+Game * goalGeneration(size_t size, string type = string());
 
-int badPlacedTiles(Game &game, Game &goal);
-int manhattanDistance(Game &game, Game &goal);
-int manDist_linCon(Game &game, Game &goal);
-int linearConflict(Game &game, Game &goal);
+int badPlacedTiles(Game *game, Game *goal);
+int manhattanDistance(Game *game, Game *goal);
+int manDist_linCon(Game *game, Game *goal);
+int linearConflict(Game *game, Game *goal);
 
 int uniformCostSearch(Node *n);
 int greedySearch(Node *n);

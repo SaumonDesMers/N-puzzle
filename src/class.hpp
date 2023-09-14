@@ -18,9 +18,9 @@ struct Game;
 struct Node;
 struct Config;
 
-typedef int (*heuristique_fct)(Game &, Game &);
+typedef int (*heuristique_fct)(Game *, Game *);
 typedef int (*sort_fct)(Node *n);
-typedef Node *(*algo_fct)(Config cfg);
+typedef Node *(*algo_fct)(Config &cfg);
 
 struct vec2 {
 	int row; int col;
@@ -42,9 +42,8 @@ struct vec2 {
 }; //npos(-1, -1);
 
 struct Game {
-	typedef int* Grid;
 
-	Grid grid;
+	int *grid;
 	int *tilesPos;
 	size_t size;
 	size_t emptyPos;
@@ -136,8 +135,8 @@ struct Game {
 		return pos.row < 0 || pos.row >= static_cast<int>(size) || pos.col < 0 || pos.col >= static_cast<int>(size);
 	}
 
-	vector<Game> getNextTurns() {
-		vector<Game> nextTurns;
+	vector<Game *> getNextTurns() {
+		vector<Game *> nextTurns;
 		vector<size_t> nextEmptyPos;
 
 		nextTurns.reserve(4);
@@ -152,19 +151,23 @@ struct Game {
 		if (emptyPos_col < size - 1) nextEmptyPos.push_back(emptyPos + 1);
 
 		for (size_t i = 0; i < nextEmptyPos.size(); i++) {
-			Game nextTurn(*this);
-			swap(nextTurn.at(nextTurn.emptyPos), nextTurn.at(nextEmptyPos[i]));
-			nextTurn.updateTilesPos();
-			nextTurn.emptyPos = nextEmptyPos[i];
-			nextTurn.setHash();
+			Game *nextTurn = new Game(*this);
+			swap(nextTurn->at(nextTurn->emptyPos), nextTurn->at(nextEmptyPos[i]));
+			nextTurn->updateTilesPos();
+			nextTurn->emptyPos = nextEmptyPos[i];
+			nextTurn->setHash();
 			nextTurns.push_back(nextTurn);
+
+			// vector<int> nextTurnTab(grid, grid + size * size);
+			// swap(nextTurnTab[emptyPos], nextTurnTab[nextEmptyPos[i]]);
+			// nextTurns.push_back(nextTurnTab);
 		}
 		return nextTurns;
 	}
 
-	vec2 find(int val) {
-		return vec2(tilesPos[val] / size, tilesPos[val] % size);
-	}
+	// vec2 find(int val) {
+	// 	return vec2(tilesPos[val] / size, tilesPos[val] % size);
+	// }
 
 	void setHash() {
 		hashKey.clear();
@@ -195,11 +198,11 @@ struct Node {
 	vector<Node *> childs;
 	Node *parent;
 
-	Game game;
+	Game *game;
 	int depth; // GCost
 	int HCost;
 
-	Node(Game _g, Node *_p = NULL, int _d = 0, int _hc = 0)
+	Node(Game * _g, Node *_p = NULL, int _d = 0, int _hc = 0)
 	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc) {}
 	Node(Node const &src) : childs(src.childs), parent(src.parent), game(src.game), depth(src.depth), HCost(src.HCost) {}
 	Node operator=(Node const &src) {
@@ -211,18 +214,22 @@ struct Node {
 		return *this;
 	}
 
-	void clear(bool rootReach = false) {
-		if (!rootReach && parent != NULL) {
-			parent->clear();
+	~Node() {
+		delete game;
+	}
+
+	void clear(bool clearParent = false) {
+		if (clearParent && parent != NULL) {
+			parent->clear(true);
 			return;
 		}
 		for (size_t i = 0; i < childs.size(); i++)
-			childs[i]->clear(true);
+			childs[i]->clear();
 		delete this;
 	}
 
 	void expand() {
-		vector<Game> nextTurns = game.getNextTurns();
+		vector<Game *> nextTurns = game->getNextTurns();
 		for (size_t i = 0; i < nextTurns.size(); i++)
 			childs.push_back(new Node(nextTurns[i], this, depth + 1));
 	}

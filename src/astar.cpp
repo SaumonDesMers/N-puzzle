@@ -1,11 +1,11 @@
 #include "include.hpp"
 #include "config.hpp"
 
-Node *AStar(Config cfg) {
+Node *AStar(Config &cfg) {
     cout << "-------- AStar --------" << endl;
 	multimap<int, Node *> open;
 	unordered_map<string, Node *> close;
-	Node *root = new Node(cfg.start);
+	Node *root = new Node(new Game(*cfg.start));
     Node *current = NULL;
 
 	auto start = chrono::system_clock::now();
@@ -22,15 +22,15 @@ Node *AStar(Config cfg) {
 		// system("clear");
 		current = open.begin()->second;
 		open.erase(open.begin());
-		close[current->game.hashKey] = current;
+		close[current->game->hashKey] = current;
 
 		if (current->HCost == 0)
 			break;
 
-		vector<Game> nextTurns = current->game.getNextTurns();
+		vector<Game *> nextTurns = current->game->getNextTurns();
 
 		for (size_t i = 0; i < nextTurns.size(); i++) {
-			unordered_map<string, Node *>::iterator it = close.find(nextTurns[i].hashKey);
+			unordered_map<string, Node *>::iterator it = close.find(nextTurns[i]->hashKey);
 
 			if (it == close.end()) {
 				Node *child = new Node(nextTurns[i], current, current->depth + 1);
@@ -38,10 +38,12 @@ Node *AStar(Config cfg) {
 
 				child->HCost = cfg.h(child->game, cfg.goal) * cfg.weight;
 				open.insert(make_pair(cfg.sortSearch(child), child));
+				continue;
 			}
-			else if (it->second->depth > current->depth + 1) {
+			if (it->second->depth > current->depth + 1)
 				it->second->setParent(current);
-			}
+			
+			delete nextTurns[i];
 		}
 
 		if (open.empty()) {

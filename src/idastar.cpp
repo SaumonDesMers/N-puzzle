@@ -5,13 +5,13 @@
 
 Node *solution = NULL;
 
-int recusiveSearch(Node *current, int g, int limit, Config cfg) {
+int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 	static unordered_map<string, Node *> explored;
-	unordered_map<string, Node *>::iterator it = explored.find(current->game.hashKey);
+	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
 		current->HCost = cfg.h(current->game, cfg.goal);
 		current->expand();
-		explored[current->game.hashKey] = current;
+		explored[current->game->hashKey] = current;
 	}
 	else {
 		current = it->second;
@@ -37,7 +37,7 @@ int recusiveSearch(Node *current, int g, int limit, Config cfg) {
 	return minLimit;
 }
 
-Node *IDAStar(Config cfg) {
+Node *IDAStar(Config &cfg) {
     cout << "------- IDAStar -------" << endl;
 
 	auto start = chrono::system_clock::now();
