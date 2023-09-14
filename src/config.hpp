@@ -14,7 +14,6 @@ struct Config {
 	Config() : algo(NULL), maxIter(0), weight(0), sortSearch(NULL), h(NULL), goal(NULL), start(NULL), size(0) {}
 
 	~Config() {
-		cerr << "Config destructor" << endl;
 		delete goal;
 		delete start;
 	}

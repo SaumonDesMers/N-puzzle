@@ -5,7 +5,7 @@ Node *AStar(Config &cfg) {
     cout << "-------- AStar --------" << endl;
 	multimap<int, Node *> open;
 	unordered_map<string, Node *> close;
-	Node *root = new Node(new Game(*cfg.start));
+	Node *root = new Node(new Game(*cfg.start)); // copy of start to avoid double free (start and goal are deleted in Config destructor)
     Node *current = NULL;
 
 	auto start = chrono::system_clock::now();
@@ -16,10 +16,6 @@ Node *AStar(Config &cfg) {
 
     int i = 0;
 	for (; i < cfg.maxIter; i++) {
-		// printTree(root);
-		// string str;
-		// getline(cin, str);
-		// system("clear");
 		current = open.begin()->second;
 		open.erase(open.begin());
 		close[current->game->hashKey] = current;
@@ -27,13 +23,33 @@ Node *AStar(Config &cfg) {
 		if (current->HCost == 0)
 			break;
 
-		vector<Game *> nextTurns = current->game->getNextTurns();
+		// vector<Game *> nextTurns = current->game->getNextTurns();
 
-		for (size_t i = 0; i < nextTurns.size(); i++) {
-			unordered_map<string, Node *>::iterator it = close.find(nextTurns[i]->hashKey);
+		// for (size_t i = 0; i < nextTurns.size(); i++) {
+		// 	unordered_map<string, Node *>::iterator it = close.find(nextTurns[i]->hashKey);
+
+		// 	if (it == close.end()) {
+		// 		Node *child = new Node(nextTurns[i], current, current->depth + 1);
+		// 		current->childs.push_back(child);
+
+		// 		child->HCost = cfg.h(child->game, cfg.goal) * cfg.weight;
+		// 		open.insert(make_pair(cfg.sortSearch(child), child));
+		// 		continue;
+		// 	}
+		// 	if (it->second->depth > current->depth + 1)
+		// 		it->second->setParent(current);
+			
+		// 	delete nextTurns[i];
+		// }
+
+		vector<Move> nextMoves = current->game->getMoves();
+
+		for (size_t i = 0; i < nextMoves.size(); i++) {
+			Game *nextTurn = new Game(*current->game, nextMoves[i]);
+			unordered_map<string, Node *>::iterator it = close.find(nextTurn->hashKey);
 
 			if (it == close.end()) {
-				Node *child = new Node(nextTurns[i], current, current->depth + 1);
+				Node *child = new Node(nextTurn, current, current->depth + 1);
 				current->childs.push_back(child);
 
 				child->HCost = cfg.h(child->game, cfg.goal) * cfg.weight;
@@ -43,7 +59,7 @@ Node *AStar(Config &cfg) {
 			if (it->second->depth > current->depth + 1)
 				it->second->setParent(current);
 			
-			delete nextTurns[i];
+			delete nextTurn;
 		}
 
 		if (open.empty()) {
