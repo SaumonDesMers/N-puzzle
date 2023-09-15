@@ -11,6 +11,26 @@ void getSolution(Node *n) {
 		cout << "No solution found" << endl;
 	else {
 		cout << "Solution found in "<< n->depth << " turn" << endl;
+
+		// write solution in file
+		ofstream file("solution.txt");
+		if (file.is_open()) {
+			string move = "";
+			while (n->parent != NULL) {
+				switch (n->game->lastMove.direction) {
+					case UP: move = "UP"; break;
+					case DOWN: move = "DOWN"; break;
+					case LEFT: move = "LEFT"; break;
+					case RIGHT: move = "RIGHT"; break;
+					default: move = "unknown"; break;
+				}
+				file << move << endl;
+				n = n->parent;
+			}
+			file.close();
+		}
+		else
+			cout << "Unable to open solution.txt file" << endl;
 	}
 }
 
