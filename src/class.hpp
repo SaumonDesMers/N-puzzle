@@ -13,17 +13,18 @@
 
 using namespace std;
 
-#define ROW 0
-#define COL 1
+#define ROW 0b1100
+#define COL 0b0011
+
+#define LEFT 0b1000
+#define RIGHT 0b0100
+#define UP 0b0010
+#define DOWN 0b0001
 
 struct vec2;
 struct Game;
 struct Node;
 struct Config;
-
-typedef int (*heuristique_fct)(Game *, Game *);
-typedef int (*sort_fct)(Node *n);
-typedef Node *(*algo_fct)(Config &cfg);
 
 struct vec2 {
 	int row; int col;
@@ -65,14 +66,14 @@ struct Game {
 	int *grid;
 	int *tilesPos;
 	size_t size;
-	size_t emptyPos;
+	// size_t emptyPos;
 	Move lastMove;
 
 	string hashKey;
 
-	Game() : grid(NULL), tilesPos(NULL), size(0), emptyPos(0), hashKey("") {}
+	Game() : grid(NULL), tilesPos(NULL), size(0), hashKey("") {}
 
-	Game(Game const &src) : size(src.size), emptyPos(src.emptyPos), lastMove(src.lastMove), hashKey(src.hashKey) {
+	Game(Game const &src) : size(src.size), lastMove(src.lastMove), hashKey(src.hashKey) {
 
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
@@ -93,15 +94,14 @@ struct Game {
 			tilesPos[grid[i]] = i;
 		}
 
-		emptyPos = move.prevPos;
 		swap(grid[move.prevPos], grid[move.nextPos]);
 		tilesPos[grid[move.prevPos]] = move.prevPos;
-		tilesPos[grid[move.nextPos]] = move.nextPos; // TODO: check if needed
+		tilesPos[grid[move.nextPos]] = move.nextPos;
 
 		setHash();
 	}
 
-	Game(vector<int> tab) : size(sqrt(tab.size())) {
+	Game(vector<int> tab) : size(sqrt(tab.size())), lastMove(Move()) {
 
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
@@ -109,8 +109,6 @@ struct Game {
 		for (size_t i = 0; i < size * size; i++) {
 			grid[i] = tab[i];
 			tilesPos[grid[i]] = i;
-			if (grid[i] == 0)
-				emptyPos = i;
 		}
 
 		setHash();
@@ -134,7 +132,6 @@ struct Game {
 			grid[i] = src.grid[i];
 			tilesPos[grid[i]] = i;
 		}
-		emptyPos = src.emptyPos;
 		hashKey = src.hashKey;
 		lastMove = src.lastMove;
 		return *this;
@@ -148,8 +145,6 @@ struct Game {
 		for (size_t i = 0; i < tab.size(); i++) {
 			grid[i] = tab[i];
 			tilesPos[grid[i]] = i;
-			if (grid[i] == 0)
-				emptyPos = i;
 		}
 		setHash();
 		return *this;
@@ -171,6 +166,10 @@ struct Game {
 		return grid[pos];
 	}
 
+	size_t getEmptyPos() {
+		return tilesPos[0];
+	}
+
 	bool outOfBound(vec2 pos) {
 		return pos.row < 0 || pos.row >= static_cast<int>(size) || pos.col < 0 || pos.col >= static_cast<int>(size);
 	}
@@ -182,55 +181,42 @@ struct Game {
 		nextTurns.reserve(4);
 		nextEmptyPos.reserve(4);
 
-		size_t emptyPos_row = emptyPos / size;
-		size_t emptyPos_col = emptyPos % size;
+		size_t emptyPos_row = getEmptyPos() / size;
+		size_t emptyPos_col = getEmptyPos() % size;
 
-		if (emptyPos_row > 0) nextEmptyPos.push_back(emptyPos - size);
-		if (emptyPos_row < size - 1) nextEmptyPos.push_back(emptyPos + size);
-		if (emptyPos_col > 0) nextEmptyPos.push_back(emptyPos - 1);
-		if (emptyPos_col < size - 1) nextEmptyPos.push_back(emptyPos + 1);
+		if (emptyPos_row > 0) nextEmptyPos.push_back(getEmptyPos() - size);
+		if (emptyPos_row < size - 1) nextEmptyPos.push_back(getEmptyPos() + size);
+		if (emptyPos_col > 0) nextEmptyPos.push_back(getEmptyPos() - 1);
+		if (emptyPos_col < size - 1) nextEmptyPos.push_back(getEmptyPos() + 1);
 
 		for (size_t i = 0; i < nextEmptyPos.size(); i++) {
 			Game *nextTurn = new Game(*this);
-			swap(nextTurn->at(nextTurn->emptyPos), nextTurn->at(nextEmptyPos[i]));
+			swap(nextTurn->at(nextTurn->getEmptyPos()), nextTurn->at(nextEmptyPos[i]));
 			nextTurn->updateTilesPos();
-			nextTurn->emptyPos = nextEmptyPos[i];
 			nextTurn->setHash();
 			nextTurns.push_back(nextTurn);
 
 			// vector<int> nextTurnTab(grid, grid + size * size);
-			// swap(nextTurnTab[emptyPos], nextTurnTab[nextEmptyPos[i]]);
+			// swap(nextTurnTab[getEmptyPos()], nextTurnTab[nextEmptyPos[i]]);
 			// nextTurns.push_back(nextTurnTab);
 		}
 		return nextTurns;
 	}
 
 	vector<Move> getMoves() {
+		size_t emptyPos = getEmptyPos();
 		vector<Move> moves;
-		// vector<size_t> nextEmptyPos;
 
 		moves.reserve(4);
-		// nextEmptyPos.reserve(4);
 
-		size_t emptyPos_row = emptyPos / size;
-		size_t emptyPos_col = emptyPos % size;
-
-		if (emptyPos_row > 0) {
-			// nextEmptyPos.push_back(emptyPos - size);
-			moves.push_back(Move(grid[emptyPos - size], emptyPos - size, emptyPos, COL));
-		}
-		if (emptyPos_row < size - 1) {
-			// nextEmptyPos.push_back(emptyPos + size);
-			moves.push_back(Move(grid[emptyPos + size], emptyPos + size, emptyPos, COL));
-		}
-		if (emptyPos_col > 0) {
-			// nextEmptyPos.push_back(emptyPos - 1);
-			moves.push_back(Move(grid[emptyPos - 1], emptyPos - 1, emptyPos, ROW));
-		}
-		if (emptyPos_col < size - 1) {
-			// nextEmptyPos.push_back(emptyPos + 1);
-			moves.push_back(Move(grid[emptyPos + 1], emptyPos + 1, emptyPos, ROW));
-		}
+		if (emptyPos / size > 0)
+			moves.push_back(Move(grid[emptyPos - size], emptyPos - size, emptyPos, UP));
+		if (emptyPos / size < size - 1)
+			moves.push_back(Move(grid[emptyPos + size], emptyPos + size, emptyPos, DOWN));
+		if (emptyPos % size > 0)
+			moves.push_back(Move(grid[emptyPos - 1], emptyPos - 1, emptyPos, LEFT));
+		if (emptyPos % size < size - 1)
+			moves.push_back(Move(grid[emptyPos + 1], emptyPos + 1, emptyPos, RIGHT));
 		return moves;
 	}
 
@@ -263,6 +249,21 @@ struct Game {
 
 };
 
+struct Cost {
+
+	int FCost;
+	int GCost;
+	int HCost;
+
+	int badPlacedTiles;
+	int manhattanDistance;
+	int linearConflict;
+
+	Cost(int _FCost = 0, int _GCost = 0, int _HCost = 0, int _badPlacedTiles = 0, int _manhattanDistance = 0, int _linearConflict = 0)
+	: FCost(_FCost), GCost(_GCost), HCost(_HCost), badPlacedTiles(_badPlacedTiles), manhattanDistance(_manhattanDistance), linearConflict(_linearConflict) {}
+
+};
+
 struct Node {
 	vector<Node *> childs;
 	Node *parent;
@@ -270,6 +271,7 @@ struct Node {
 	Game *game;
 	int depth; // GCost
 	int HCost;
+	Cost cost;
 
 	Node(Game * _g, Node *_p = NULL, int _d = 0, int _hc = 0)
 	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc) {}

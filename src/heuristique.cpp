@@ -1,22 +1,61 @@
 #include "include.hpp"
 
-int badPlacedTiles(Game *game, Game *goal) {
+int badPlacedTiles(Node *node, Game *goal) {
+	Game *game = node->game;
 	int val = 0;
 	for (size_t i = 0; i < game->size * game->size; i++)
 		val += (game->at(i) == goal->at(i) ? 0 : 1);
+
+	// this is not needed because not used
+	// node->cost.badPlacedTiles = val;
+	// node->cost.FCost = val;
+
 	return val;
 }
 
-int manhattanDistance(Game *game, Game *goal) {
+#define MANDIS(pos, goalPos, size) ::abs(pos / size - goalPos / size) + ::abs(pos % size - goalPos % size)
+
+int manhattanDistance(Node *node, Game *goal) {
+	Game *game = node->game;
+	int size = game->size;
+
+	// manhattan distance taking parent cost into account
+	if (node->parent != NULL) {
+		int movedTileGoalPos = goal->tilesPos[node->game->lastMove.tileMoved];
+		
+		// manhattan distance of the moved tile in the parent node
+		int movedTileParentPos = node->game->lastMove.prevPos;
+		int movedTileParentManDis = MANDIS(movedTileParentPos, movedTileGoalPos, size);
+
+		// manhattan distance of the moved tile in the current node
+		int movedTilePos = node->game->lastMove.nextPos;
+		int movedTileManDis = MANDIS(movedTilePos, movedTileGoalPos, size);
+
+		node->cost.manhattanDistance = node->parent->cost.manhattanDistance + movedTileManDis - movedTileParentManDis;
+
+		// cerr << "movedTile = " << node->game->lastMove.tileMoved << endl;
+		// cerr << "movedTileGoalPos = " << movedTileGoalPos << endl;
+		// cerr << "movedTileParentPos = " << movedTileParentPos << endl;
+		// cerr << "movedTileParentManDis = " << movedTileParentManDis << endl;
+		// cerr << "movedTilePos = " << movedTilePos << endl;
+		// cerr << "movedTileManDis = " << movedTileManDis << endl;
+		// cerr << "HCost = " << node->cost.manhattanDistance << "\n" << endl;
+		return node->cost.manhattanDistance;
+	}
+
+	// manhattan distance without taking parent cost into account
 	int val = 0;
 	for (size_t i = 1; i < game->size * game->size; i++) {
-		int size = game->size;
-		val += ::abs(game->tilesPos[i] / size - goal->tilesPos[i] / size) + ::abs(game->tilesPos[i] % size - goal->tilesPos[i] % size);
+		val += MANDIS(game->tilesPos[i], goal->tilesPos[i], size);
 	}
+	// cerr << "HCost = " << val << "\n" << endl;
+	node->cost.manhattanDistance = val;
 	return val;
+
 }
 
-int linearConflict(Game *game, Game *goal) {
+int linearConflict(Node *node, Game *goal) {
+	Game *game = node->game;
 	int count = 0;
 	int size = game->size;
 	// for each tiles
@@ -58,11 +97,11 @@ int linearConflict(Game *game, Game *goal) {
 			}
 		}
 	}
-	return count;
+	return 2 * count;
 }
 
-int manDist_linCon(Game *game, Game *goal) {
-	return manhattanDistance(game, goal) + 2 * linearConflict(game, goal);
+int manDist_linCon(Node *node, Game *goal) {
+	return manhattanDistance(node, goal) + linearConflict(node, goal);
 }
 
 int uniformCostSearch(Node *n) {

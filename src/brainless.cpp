@@ -11,7 +11,7 @@ Node * recursiveBrainless(Node *current, Config cfg) {
 	static unordered_map<string, Node *> explored;
 	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
-		current->HCost = cfg.h(current->game, cfg.goal);
+		current->HCost = cfg.h(current, cfg.goal);
 		current->expand();
 		explored[current->game->hashKey] = current;
 	}
@@ -47,13 +47,13 @@ Node *iterativeBrainless(Config &cfg) {
 	unordered_map<string, Node *> close;
 	Node *root = new Node(cfg.start);
 	Node *current = root;
-	current->HCost = cfg.h(current->game, cfg.goal);
+	current->HCost = cfg.h(current, cfg.goal);
 	int i = 0;
 	for (; i < cfg.maxIter; i++) {
 
 		cout << "HCost = " << current->HCost << endl;
 
-		if (cfg.h(current->game, cfg.goal) == 0)
+		if (cfg.h(current, cfg.goal) == 0)
 			break;
 		
 		if (close.count(current->game->hashKey) > 0) {
@@ -65,7 +65,7 @@ Node *iterativeBrainless(Config &cfg) {
 		
 		current->expand();
 		for (size_t i = 0; i < current->childs.size(); i++)
-			current->childs[i]->HCost = cfg.h(current->childs[i]->game, cfg.goal) * cfg.weight;
+			current->childs[i]->HCost = cfg.h(current->childs[i], cfg.goal) * cfg.weight;
 		
 		current = *min_element(current->childs.begin(), current->childs.end(), [](Node *n1, Node *n2) {
 			return n1->HCost < n2->HCost;

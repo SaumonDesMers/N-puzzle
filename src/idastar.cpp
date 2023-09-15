@@ -9,7 +9,7 @@ int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 	static unordered_map<string, Node *> explored;
 	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
-		current->HCost = cfg.h(current->game, cfg.goal);
+		current->HCost = cfg.h(current, cfg.goal);
 		current->expand();
 		explored[current->game->hashKey] = current;
 	}
@@ -43,7 +43,8 @@ Node *IDAStar(Config &cfg) {
 	auto start = chrono::system_clock::now();
 	auto end = chrono::system_clock::now();
 
-	int limit = cfg.h(cfg.start, cfg.goal);
+	// int limit = cfg.h(cfg, cfg.goal);
+	int limit = 0; // TODO: fix this with new heuristic
 	int i = 0;
 	Node *root = new Node(cfg.start);
 	for (; i < cfg.maxIter; i++) {

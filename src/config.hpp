@@ -1,5 +1,8 @@
 #include "include.hpp"
 
+typedef int (*heuristique_fct)(Node *, Game *);
+typedef int (*sort_fct)(Node *n);
+typedef Node *(*algo_fct)(Config &cfg);
 struct Config {
 	map<string, string> args;
 	algo_fct algo;

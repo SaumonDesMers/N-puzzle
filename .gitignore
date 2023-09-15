@@ -5,3 +5,4 @@ dep
 .vscode
 callgrind.out.*
 valgrind.*
+solution.txt

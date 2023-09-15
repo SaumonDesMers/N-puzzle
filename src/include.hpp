@@ -33,10 +33,10 @@ Game * randomGame(size_t size);
 Game * shuffleGame(Game * game, size_t shuffleNb);
 Game * goalGeneration(size_t size, string type = string());
 
-int badPlacedTiles(Game *game, Game *goal);
-int manhattanDistance(Game *game, Game *goal);
-int manDist_linCon(Game *game, Game *goal);
-int linearConflict(Game *game, Game *goal);
+int badPlacedTiles(Node *gameNode, Game *goal);
+int manhattanDistance(Node *gameNode, Game *goal);
+int manDist_linCon(Node *gameNode, Game *goal);
+int linearConflict(Node *gameNode, Game *goal);
 
 int uniformCostSearch(Node *n);
 int greedySearch(Node *n);

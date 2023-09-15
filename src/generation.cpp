@@ -1,14 +1,5 @@
 #include "include.hpp"
 
-// Game * randomGame(size_t size) {
-//     vector<int> tab(size * size);
-//     for (size_t i = 0; i < tab.size(); i++)
-//         tab[i] = i;
-//     srand(time(NULL));
-//     random_shuffle(tab.begin(), tab.end());
-//     return Game *(tab);
-// }
-
 Game *randomGame(size_t size) {
     vector<int> tab(size * size);
     for (size_t i = 0; i < tab.size(); i++)
