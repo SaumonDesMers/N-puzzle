@@ -9,9 +9,9 @@ int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 	static unordered_map<string, Node *> explored;
 	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
-		current->HCost = cfg.h(current, cfg.goal);
+		current->cost.H = cfg.h(current, cfg.goal);
 
-		if (current->HCost == 0) {
+		if (current->cost.H == 0) {
 			solution = current;
 			return FOUND;
 		}
@@ -23,7 +23,7 @@ int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 		current = it->second;
 	}
 
-	int f = g + current->HCost;
+	int f = g + current->cost.H;
 	if (f > limit)
 		return f;
 

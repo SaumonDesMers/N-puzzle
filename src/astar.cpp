@@ -11,7 +11,7 @@ Node *AStar(Config &cfg) {
 	auto start = chrono::system_clock::now();
 	auto end = chrono::system_clock::now();
 
-	root->HCost = cfg.h(root, cfg.goal) * cfg.weight;
+	root->cost.H = cfg.h(root, cfg.goal) * cfg.weight;
 	open.insert(make_pair(cfg.sortSearch(root), root));
 
     int i = 0;
@@ -20,7 +20,7 @@ Node *AStar(Config &cfg) {
 		open.erase(open.begin());
 		close[current->game->hashKey] = current;
 
-		if (current->HCost == 0)
+		if (current->cost.H == 0)
 			break;
 
 		vector<Move> nextMoves = current->game->getMoves();
@@ -30,14 +30,14 @@ Node *AStar(Config &cfg) {
 			unordered_map<string, Node *>::iterator it = close.find(nextTurn->hashKey);
 
 			if (it == close.end()) {
-				Node *child = new Node(nextTurn, current, current->depth + 1);
+				Node *child = new Node(nextTurn, current);
 				current->childs.push_back(child);
 
-				child->HCost = cfg.h(child, cfg.goal) * cfg.weight;
+				child->cost.H = cfg.h(child, cfg.goal) * cfg.weight;
 				open.insert(make_pair(cfg.sortSearch(child), child));
 				continue;
 			}
-			if (it->second->depth > current->depth + 1)
+			if (it->second->cost.G > current->cost.G + 1)
 				it->second->setParent(current);
 			
 			delete nextTurn;

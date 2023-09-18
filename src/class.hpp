@@ -125,16 +125,16 @@ struct Game {
 
 struct Cost {
 
-	int FCost;
-	int GCost;
-	int HCost;
+	int F;
+	int G; // depth
+	int H;
 
 	int badPlacedTiles;
 	int manhattanDistance;
 	int linearConflict;
 
-	Cost(int _FCost = 0, int _GCost = 0, int _HCost = 0, int _badPlacedTiles = 0, int _manhattanDistance = 0, int _linearConflict = 0)
-	: FCost(_FCost), GCost(_GCost), HCost(_HCost), badPlacedTiles(_badPlacedTiles), manhattanDistance(_manhattanDistance), linearConflict(_linearConflict) {}
+	Cost(int _F = 0, int _G = 0, int _H = 0, int _badPlacedTiles = 0, int _manhattanDistance = 0, int _linearConflict = 0)
+	: F(_F), G(_G), H(_H), badPlacedTiles(_badPlacedTiles), manhattanDistance(_manhattanDistance), linearConflict(_linearConflict) {}
 
 };
 
@@ -143,12 +143,15 @@ struct Node {
 	Node *parent;
 
 	Game *game;
-	int depth; // GCost
-	int HCost;
+	// int depth; // GCost
+	// int HCost;
 	Cost cost;
 
-	Node(Game * _g, Node *_p = NULL, int _d = 0, int _hc = 0)
-	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc) {}
+	Node(Game * _g, Node *_p = NULL)
+	: childs(vector<Node *>()), parent(_p), game(_g) {
+		if (parent != NULL)
+			cost.G = parent->cost.G + 1;
+	}
 
 	void clear(bool clearParent = false) {
 		if (clearParent && parent != NULL) {
@@ -164,15 +167,23 @@ struct Node {
 	void expand() {
 		vector<Move> nextMoves = game->getMoves();
 		for (size_t i = 0; i < nextMoves.size(); i++)
-			childs.push_back(new Node(new Game(*game, nextMoves[i]), this, depth + 1));
+			childs.push_back(new Node(new Game(*game, nextMoves[i]), this));
 	}
 
 	void setParent(Node *_p) {
 		parent = _p;
-		depth = parent->depth + 1;
+		cost.G = parent->cost.G + 1;
 		for (size_t i = 0; i < childs.size(); i++)
 			childs[i]->setParent(this);
 	}
+};
+
+struct NodeCompare {
+
+	bool operator()(Node *a, Node *b) {
+		return a->cost.F < b->cost.F;
+	}
+
 };
 
 #endif

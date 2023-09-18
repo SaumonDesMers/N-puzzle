@@ -10,7 +10,7 @@ void getSolution(Node *n) {
 	if (n == NULL)
 		cout << "No solution found" << endl;
 	else {
-		cout << "Solution found in "<< n->depth << " turn" << endl;
+		cout << "Solution found in "<< n->cost.G << " turn" << endl;
 
 		// write solution in file
 		ofstream file("solution.txt");
@@ -52,12 +52,12 @@ void printTime(chrono::duration<double> time, string msg) {
 void printTree(string prefix, Node* node) {
 	for (size_t i = 0; i < node->childs.size(); i++) {
 		bool isLast = i == (node->childs.size() - 1);
-		cout << prefix << (!isLast ? "├─" : "└─" ) << node->childs[i]->HCost << endl;
+		cout << prefix << (!isLast ? "├─" : "└─" ) << node->childs[i]->cost.H << endl;
 		printTree(prefix + (isLast ? "  " : "| "), node->childs[i]);
 	}
 }
 
 void printTree(Node* node) {
-	cout << node->HCost << endl;
+	cout << node->cost.H << endl;
     printTree("", node);
 }

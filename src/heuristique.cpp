@@ -235,14 +235,13 @@ int linearConflict_opti(Node *node, Game *goal) {
 }
 
 int manDist_linCon(Node *node, Game *goal) {
-	node->cost.HCost = manhattanDistance(node, goal) + linearConflict_opti(node, goal);
-	return node->cost.HCost;
+	return manhattanDistance(node, goal) + linearConflict_opti(node, goal);
 }
 
 int uniformCostSearch(Node *n) {
-	return n->depth + n->HCost;
+	return n->cost.G + n->cost.H;
 }
 
 int greedySearch(Node *n) {
-	return n->HCost;
+	return n->cost.H;
 }
