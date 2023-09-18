@@ -21,8 +21,6 @@ using namespace std;
 #define UP 0b0010
 #define DOWN 0b0001
 
-struct Game;
-
 struct Move {
 
 	int tileMoved;
@@ -95,83 +93,9 @@ struct Game {
 		delete[] grid;
 		delete[] tilesPos;
 	}
-	
-	Game operator=(Game const &src) {
-		clear();
-		size = src.size;
-		grid = new int[size * size];
-		tilesPos = new int[size * size];
-		for (size_t i=0; i < size * size; i++) {
-			grid[i] = src.grid[i];
-			tilesPos[grid[i]] = i;
-		}
-		hashKey = src.hashKey;
-		lastMove = src.lastMove;
-		return *this;
-	}
-
-	Game operator=(vector<int> &tab) {
-		clear();
-		size = sqrt(tab.size());
-		grid = new int[tab.size()];
-		tilesPos = new int[size * size];
-		for (size_t i = 0; i < tab.size(); i++) {
-			grid[i] = tab[i];
-			tilesPos[grid[i]] = i;
-		}
-		setHash();
-		return *this;
-	}
-
-	void updateTilesPos() {
-		if (tilesPos == NULL)
-			tilesPos = new int[size * size];
-		
-		for (size_t i = 0; i < size * size; i++)
-			tilesPos[grid[i]] = i;
-	}
-
-
-	int &at(size_t pos) {
-		return grid[pos];
-	}
-
-	size_t getEmptyPos() {
-		return tilesPos[0];
-	}
-
-
-	vector<Game *> getNextTurns() {
-		vector<Game *> nextTurns;
-		vector<size_t> nextEmptyPos;
-
-		nextTurns.reserve(4);
-		nextEmptyPos.reserve(4);
-
-		size_t emptyPos_row = getEmptyPos() / size;
-		size_t emptyPos_col = getEmptyPos() % size;
-
-		if (emptyPos_row > 0) nextEmptyPos.push_back(getEmptyPos() - size);
-		if (emptyPos_row < size - 1) nextEmptyPos.push_back(getEmptyPos() + size);
-		if (emptyPos_col > 0) nextEmptyPos.push_back(getEmptyPos() - 1);
-		if (emptyPos_col < size - 1) nextEmptyPos.push_back(getEmptyPos() + 1);
-
-		for (size_t i = 0; i < nextEmptyPos.size(); i++) {
-			Game *nextTurn = new Game(*this);
-			swap(nextTurn->at(nextTurn->getEmptyPos()), nextTurn->at(nextEmptyPos[i]));
-			nextTurn->updateTilesPos();
-			nextTurn->setHash();
-			nextTurns.push_back(nextTurn);
-
-			// vector<int> nextTurnTab(grid, grid + size * size);
-			// swap(nextTurnTab[getEmptyPos()], nextTurnTab[nextEmptyPos[i]]);
-			// nextTurns.push_back(nextTurnTab);
-		}
-		return nextTurns;
-	}
 
 	vector<Move> getMoves() {
-		size_t emptyPos = getEmptyPos();
+		size_t emptyPos = tilesPos[0];
 		vector<Move> moves;
 
 		moves.reserve(4);
@@ -210,11 +134,7 @@ struct Game {
 	}
 
 	vector<int> toTab() {
-		vector<int> tab;
-		// tab.insert(tab.end(), grid[0], grid[size * size]);
-		for (size_t i = 0; i < size * size; i++)
-			tab.push_back(grid[i]);
-		return tab;
+		return vector<int>(grid, grid + size * size);
 	}
 
 };
@@ -245,17 +165,6 @@ struct Node {
 
 	Node(Game * _g, Node *_p = NULL, int _d = 0, int _hc = 0)
 	: childs(vector<Node *>()), parent(_p), game(_g), depth(_d), HCost(_hc) {}
-
-	// Node(Node const &src) : childs(src.childs), parent(src.parent), game(new Game(*src.game)), depth(src.depth), HCost(src.HCost) {}
-
-	// Node operator=(Node const &src) {
-	// 	childs = src.childs;
-	// 	parent = src.parent;
-	// 	game = new Game(*src.game);
-	// 	depth = src.depth;
-	// 	HCost = src.HCost;
-	// 	return *this;
-	// }
 
 	void clear(bool clearParent = false) {
 		if (clearParent && parent != NULL) {

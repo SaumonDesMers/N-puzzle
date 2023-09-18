@@ -4,7 +4,7 @@ int badPlacedTiles(Node *node, Game *goal) {
 	Game *game = node->game;
 	int val = 0;
 	for (size_t i = 0; i < game->size * game->size; i++)
-		val += (game->at(i) == goal->at(i) ? 0 : 1);
+		val += (game->grid[i] == goal->grid[i] ? 0 : 1);
 
 	// this is not needed because not used
 	// node->cost.badPlacedTiles = val;
