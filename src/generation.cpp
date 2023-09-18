@@ -18,11 +18,12 @@ Game *randomGame(size_t size) {
 
 Game *shuffleGame(Game *game, size_t shuffleNb) {
 	cout << "Shuffling game " << shuffleNb << " times..." << endl;
+	Game *shuffledGame = new Game(*game);
     for (size_t i = 0; i < shuffleNb; i++) {
-        vector<Game *> childs = game->getNextTurns();
-        game = childs[rand() % childs.size()];
+		vector<Move> moves = shuffledGame->getMoves();
+		shuffledGame->move(moves[rand() % moves.size()]);
     }
-    return game;
+    return shuffledGame;
 }
 
 Game *goalGeneration(size_t size, string type) {
