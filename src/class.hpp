@@ -125,9 +125,9 @@ struct Game {
 
 struct Cost {
 
-	int F;
+	int F; // cost used for sorting, can be uniform cost (G + H) or greedy (H)
 	int G; // depth
-	int H;
+	int H; // heuristic
 
 	int badPlacedTiles;
 	int manhattanDistance;
@@ -143,8 +143,6 @@ struct Node {
 	Node *parent;
 
 	Game *game;
-	// int depth; // GCost
-	// int HCost;
 	Cost cost;
 
 	Node(Game * _g, Node *_p = NULL)

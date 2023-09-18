@@ -3,7 +3,7 @@
 
 Node *AStar(Config &cfg) {
     cout << "-------- AStar --------" << endl;
-	multimap<int, Node *> open;
+	multiset<Node *, NodeCompare> open;
 	unordered_map<string, Node *> close;
 	Node *root = new Node(new Game(*cfg.start)); // copy of start to avoid double free (start and goal are deleted in Config destructor)
     Node *current = NULL;
@@ -12,11 +12,12 @@ Node *AStar(Config &cfg) {
 	auto end = chrono::system_clock::now();
 
 	root->cost.H = cfg.h(root, cfg.goal) * cfg.weight;
-	open.insert(make_pair(cfg.sortSearch(root), root));
+	root->cost.F = cfg.sortSearch(root);
+	open.insert(root);
 
     int i = 0;
 	for (; i < cfg.maxIter; i++) {
-		current = open.begin()->second;
+		current = *open.begin();
 		open.erase(open.begin());
 		close[current->game->hashKey] = current;
 
@@ -34,7 +35,8 @@ Node *AStar(Config &cfg) {
 				current->childs.push_back(child);
 
 				child->cost.H = cfg.h(child, cfg.goal) * cfg.weight;
-				open.insert(make_pair(cfg.sortSearch(child), child));
+				child->cost.F = cfg.sortSearch(child);
+				open.insert(child);
 				continue;
 			}
 			if (it->second->cost.G > current->cost.G + 1)
