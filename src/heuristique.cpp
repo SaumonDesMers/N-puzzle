@@ -49,6 +49,7 @@ int manhattanDistance(Node *node, Game *goal) {
 
 }
 
+// linear conflict on the whole grid
 int linearConflict(Node *node, Game *goal) {
 	Game *game = node->game;
 	int count = 0;

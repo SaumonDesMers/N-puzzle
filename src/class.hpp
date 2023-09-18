@@ -43,10 +43,8 @@ struct Game {
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
 
-		for (size_t i = 0; i < size * size; i++) {
-			grid[i] = src.grid[i];
-			tilesPos[grid[i]] = i;
-		}
+		memcpy(grid, src.grid, size * size * sizeof(int));
+		memcpy(tilesPos, src.tilesPos, size * size * sizeof(int));
 	}
 
 	Game(Game const &src, Move &move) : size(src.size), lastMove(move) {
@@ -54,10 +52,8 @@ struct Game {
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
 
-		for (size_t i = 0; i < size * size; i++) {
-			grid[i] = src.grid[i];
-			tilesPos[grid[i]] = i;
-		}
+		memcpy(grid, src.grid, size * size * sizeof(int));
+		memcpy(tilesPos, src.tilesPos, size * size * sizeof(int));
 
 		this->move(move);
 	}
@@ -109,9 +105,7 @@ struct Game {
 	}
 
 	void setHash() {
-		hashKey.clear();
-		for (size_t i = 0; i < size * size; i++)
-			hashKey += static_cast<char>(grid[i]);
+		hashKey.assign(reinterpret_cast<char *>(grid), reinterpret_cast<char *>(grid) + size * size * sizeof(int)); 
 	}
 
 	void print() {
