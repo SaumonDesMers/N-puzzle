@@ -22,8 +22,6 @@ using namespace std;
 #define DOWN 0b0001
 
 struct Game;
-struct Node;
-struct Config;
 
 struct Move {
 
@@ -46,7 +44,6 @@ struct Game {
 	int *grid;
 	int *tilesPos;
 	size_t size;
-	// size_t emptyPos;
 	Move lastMove;
 
 	string hashKey;
@@ -58,7 +55,7 @@ struct Game {
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
 
-		for (size_t i=0; i < size * size; i++) {
+		for (size_t i = 0; i < size * size; i++) {
 			grid[i] = src.grid[i];
 			tilesPos[grid[i]] = i;
 		}
@@ -69,16 +66,12 @@ struct Game {
 		grid = new int[size * size];
 		tilesPos = new int[size * size];
 
-		for (size_t i=0; i < size * size; i++) {
+		for (size_t i = 0; i < size * size; i++) {
 			grid[i] = src.grid[i];
 			tilesPos[grid[i]] = i;
 		}
 
-		swap(grid[move.prevPos], grid[move.nextPos]);
-		tilesPos[grid[move.prevPos]] = move.prevPos;
-		tilesPos[grid[move.nextPos]] = move.nextPos;
-
-		setHash();
+		this->move(move);
 	}
 
 	Game(vector<int> tab) : size(sqrt(tab.size())), lastMove(Move()) {
@@ -117,7 +110,7 @@ struct Game {
 		return *this;
 	}
 
-	Game operator=(vector<int> tab) {
+	Game operator=(vector<int> &tab) {
 		clear();
 		size = sqrt(tab.size());
 		grid = new int[tab.size()];
@@ -192,6 +185,13 @@ struct Game {
 		if (emptyPos % size < size - 1)
 			moves.push_back(Move(grid[emptyPos + 1], emptyPos + 1, emptyPos, RIGHT));
 		return moves;
+	}
+
+	void move(Move &move) {
+		swap(grid[move.prevPos], grid[move.nextPos]);
+		tilesPos[grid[move.prevPos]] = move.prevPos;
+		tilesPos[grid[move.nextPos]] = move.nextPos;
+		setHash();
 	}
 
 	void setHash() {
@@ -269,9 +269,9 @@ struct Node {
 	}
 
 	void expand() {
-		vector<Game *> nextTurns = game->getNextTurns();
-		for (size_t i = 0; i < nextTurns.size(); i++)
-			childs.push_back(new Node(nextTurns[i], this, depth + 1));
+		vector<Move> nextMoves = game->getMoves();
+		for (size_t i = 0; i < nextMoves.size(); i++)
+			childs.push_back(new Node(new Game(*game, nextMoves[i]), this, depth + 1));
 	}
 
 	void setParent(Node *_p) {
