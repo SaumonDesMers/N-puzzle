@@ -21,29 +21,9 @@ using namespace std;
 #define UP 0b0010
 #define DOWN 0b0001
 
-struct vec2;
 struct Game;
 struct Node;
 struct Config;
-
-struct vec2 {
-	int row; int col;
-	vec2(int _row = 0, int _col = 0) : row(_row), col(_col) {}
-	vec2(string s) {
-		string s_row = s.substr(0, s.find_first_not_of("-0123456789"));
-		string s_col = s.substr(s.find_last_not_of("-0123456789"), s.size());
-		row = atoi(s_row.c_str());
-		row = atoi(s_col.c_str());
-	}
-	vec2(vec2 const &src) : row(src.row), col(src.col) {}
-	vec2 &operator=(vec2 const &src) { row = src.row; col = src.col; return *this; }
-	bool operator==(vec2 const &src) const { return row == src.row && col == src.col; }
-	bool operator!=(vec2 const &src) const { return !(*this == src); }
-	void set(int _row, int _col) { row = _row; col = _col; }
-	void add(int _row, int _col) { row += _row; col += _col; }
-	void add(vec2 &v) { row += v.row; col += v.col; }
-	string to_str() { return to_string(row) + " " + to_string(col); }
-}; //npos(-1, -1);
 
 struct Move {
 
@@ -158,9 +138,6 @@ struct Game {
 			tilesPos[grid[i]] = i;
 	}
 
-	int &at(vec2 pos) {
-		return grid[pos.row * size + pos.col];
-	}
 
 	int &at(size_t pos) {
 		return grid[pos];
@@ -170,9 +147,6 @@ struct Game {
 		return tilesPos[0];
 	}
 
-	bool outOfBound(vec2 pos) {
-		return pos.row < 0 || pos.row >= static_cast<int>(size) || pos.col < 0 || pos.col >= static_cast<int>(size);
-	}
 
 	vector<Game *> getNextTurns() {
 		vector<Game *> nextTurns;
@@ -219,10 +193,6 @@ struct Game {
 			moves.push_back(Move(grid[emptyPos + 1], emptyPos + 1, emptyPos, RIGHT));
 		return moves;
 	}
-
-	// vec2 find(int val) {
-	// 	return vec2(tilesPos[val] / size, tilesPos[val] % size);
-	// }
 
 	void setHash() {
 		hashKey.clear();
