@@ -4,5 +4,6 @@ obj
 dep
 .vscode
 callgrind.out.*
+massif.out.*
 valgrind.*
 solution.txt
