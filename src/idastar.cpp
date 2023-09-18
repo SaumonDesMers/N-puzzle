@@ -10,6 +10,12 @@ int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 	unordered_map<string, Node *>::iterator it = explored.find(current->game->hashKey);
 	if (it == explored.end()) {
 		current->HCost = cfg.h(current, cfg.goal);
+
+		if (current->HCost == 0) {
+			solution = current;
+			return FOUND;
+		}
+
 		current->expand();
 		explored[current->game->hashKey] = current;
 	}
@@ -18,15 +24,9 @@ int recusiveSearch(Node *current, int g, int limit, Config &cfg) {
 	}
 
 	int f = g + current->HCost;
-
 	if (f > limit)
 		return f;
-	
-	if (current->HCost == 0) {
-		solution = current;
-		return FOUND;
-	}
-	
+
 	int minLimit = INT_MAX;
 	for (size_t i = 0; i < current->childs.size(); i++) {
 		int tmp = recusiveSearch(current->childs[i], g + 1, limit, cfg);
@@ -43,10 +43,9 @@ Node *IDAStar(Config &cfg) {
 	auto start = chrono::system_clock::now();
 	auto end = chrono::system_clock::now();
 
-	// int limit = cfg.h(cfg, cfg.goal);
-	int limit = 0; // TODO: fix this with new heuristic
+	Node *root = new Node(new Game(*cfg.start)); // copy of start to avoid double free (start and goal are deleted in Config destructor)
+	int limit = cfg.h(root, cfg.goal);
 	int i = 0;
-	Node *root = new Node(cfg.start);
 	for (; i < cfg.maxIter; i++) {
 		int tmp = recusiveSearch(root, 0, limit, cfg);
 		if (tmp == FOUND)
@@ -60,5 +59,6 @@ Node *IDAStar(Config &cfg) {
 	getSolution(solution);
 	printTime(end-start, "execution time = ");
     cout << "------------------------" << endl;
-	return solution;
+	root->clear();
+	return NULL;
 }
