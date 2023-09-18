@@ -24,8 +24,6 @@ bool parseGame(string fileName, Game *&game);
 
 Node *AStar(Config &cfg);
 Node *IDAStar(Config &cfg);
-Node *iterativeBrainless(Config &cfg);
-Node *recursiveBrainless(Config &cfg);
 
 bool isSolvable(vector<int> game, vector<int> goal);
 

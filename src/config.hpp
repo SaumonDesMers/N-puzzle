@@ -62,10 +62,6 @@ struct Config {
 			algo = AStar;
 		else if (val == "IDAStar")
 			algo = IDAStar;
-		else if (val == "iterativeBrainless")
-			algo = iterativeBrainless;
-		else if (val == "recursiveBrainless")
-			algo = recursiveBrainless;
 		else
 			return EXIT_FAILURE;
 		
