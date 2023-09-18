@@ -1,16 +1,6 @@
 #ifndef CLASS_HPP
 #define CLASS_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
-#include <map>
-
 using namespace std;
 
 #define ROW 0b1100
