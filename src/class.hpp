@@ -1,6 +1,8 @@
 #ifndef CLASS_HPP
 #define CLASS_HPP
 
+#include "include.hpp"
+
 using namespace std;
 
 #define ROW 0b1100
