@@ -31,8 +31,8 @@ struct Move {
 
 struct Game {
 
-	uint16_t *grid;
-	uint16_t *tilesPos;
+	int *grid;
+	int *tilesPos;
 	size_t size;
 	Move lastMove;
 
@@ -42,28 +42,28 @@ struct Game {
 
 	Game(Game const &src) : size(src.size), lastMove(src.lastMove), hashKey(src.hashKey) {
 
-		grid = new uint16_t[size * size];
-		tilesPos = new uint16_t[size * size];
+		grid = new int[size * size];
+		tilesPos = new int[size * size];
 
-		memcpy(grid, src.grid, size * size * sizeof(uint16_t));
-		memcpy(tilesPos, src.tilesPos, size * size * sizeof(uint16_t));
+		memcpy(grid, src.grid, size * size * sizeof(int));
+		memcpy(tilesPos, src.tilesPos, size * size * sizeof(int));
 	}
 
 	Game(Game const &src, Move &move) : size(src.size), lastMove(move) {
 
-		grid = new uint16_t[size * size];
-		tilesPos = new uint16_t[size * size];
+		grid = new int[size * size];
+		tilesPos = new int[size * size];
 
-		memcpy(grid, src.grid, size * size * sizeof(uint16_t));
-		memcpy(tilesPos, src.tilesPos, size * size * sizeof(uint16_t));
+		memcpy(grid, src.grid, size * size * sizeof(int));
+		memcpy(tilesPos, src.tilesPos, size * size * sizeof(int));
 
 		this->move(move);
 	}
 
 	Game(vector<int> tab) : size(sqrt(tab.size())), lastMove(Move()) {
 
-		grid = new uint16_t[size * size];
-		tilesPos = new uint16_t[size * size];
+		grid = new int[size * size];
+		tilesPos = new int[size * size];
 
 		for (size_t i = 0; i < size * size; i++) {
 			grid[i] = tab[i];
