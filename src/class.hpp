@@ -107,7 +107,7 @@ struct Game {
 	}
 
 	void setHash() {
-		hashKey.assign(reinterpret_cast<char *>(grid), reinterpret_cast<char *>(grid) + size * size * sizeof(int)); 
+		hashKey.assign(reinterpret_cast<char *>(grid), reinterpret_cast<char *>(grid) + size * size * sizeof(uint16_t)); 
 	}
 
 	void print() {
