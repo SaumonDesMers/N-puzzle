@@ -1,3 +1,6 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
 #include "include.hpp"
 
 typedef int (*heuristique_fct)(Node *, Game *);
@@ -133,3 +136,5 @@ struct Config {
 		}
 	}
 };
+
+#endif
