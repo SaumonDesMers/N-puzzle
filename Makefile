@@ -6,7 +6,7 @@ NAME		= solver
 
 SRC_DIR		= src
 SRC			= $(patsubst %, $(SRC_DIR)/%, main.cpp parsing_game.cpp astar.cpp generation.cpp \
-				solvability.cpp heuristique.cpp other.cpp idastar.cpp)
+				solvability.cpp heuristic.cpp other.cpp idastar.cpp)
 HEADER_DIR	= include
 
 OBJ_DIR		= obj

@@ -126,10 +126,8 @@ int linearConfict_row(Game *game, Game *goal, size_t row) {
 
 				int nGoalPos = goal->tilesPos[n];
 				// if neighbour is in the correct row and its goal col is at the left of the current tile's goal col
-				if (pos / size == nGoalPos / size && nGoalPos % size < goalPos % size) {
-					// cout << "neighbour is in the correct row and its goal col is at the left of the current tile's goal col" << endl;
+				if (pos / size == nGoalPos / size && nGoalPos % size < goalPos % size)
 					count++;
-				}
 			}
 		}
 	}
@@ -165,10 +163,8 @@ int linearConfict_col(Game *game, Game *goal, size_t col) {
 
 				int nGoalPos = goal->tilesPos[n];
 				// if neighbour is in the correct col and its goal row is above the current tile's goal row
-				if (pos % size == nGoalPos % size && nGoalPos / size < goalPos / size) {
-					// cout << "neighbour is in the correct col and its goal row is above the current tile's goal row" << endl;
+				if (pos % size == nGoalPos % size && nGoalPos / size < goalPos / size)
 					count++;
-				}
 			}
 		}
 	}

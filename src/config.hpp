@@ -51,16 +51,16 @@ struct Config {
 
 	bool parse() {
 
-		if (args.count("algorithme") == 0
+		if (args.count("algorithm") == 0
 			|| args.count("maxIteration") == 0
 			|| args.count("weight") == 0
 			|| args.count("sortingFunction") == 0
-			|| args.count("heuristique") == 0
+			|| args.count("heuristic") == 0
 			|| args.count("start") == 0
 			|| args.count("goal") == 0)
 			return EXIT_FAILURE;
 		
-		string val = args["algorithme"];
+		string val = args["algorithm"];
 		if (val == "AStar")
 			algo = AStar;
 		else if (val == "IDAStar")
@@ -82,7 +82,7 @@ struct Config {
 		else
 			return EXIT_FAILURE;
 
-		val = args["heuristique"];
+		val = args["heuristic"];
 		if (val == "badPlacedTiles")
 			h = badPlacedTiles;
 		else if (val == "manhattanDistance")
@@ -116,10 +116,10 @@ struct Config {
 	}
 
 	void print() {
-		cout << "algorithme" << " = " << args["algorithme"] << endl;
+		cout << "algorithm" << " = " << args["algorithm"] << endl;
 		cout << "weight" << " = " << args["weight"] << endl;
 		cout << "sortingFunction" << " = " << args["sortingFunction"] << endl;
-		cout << "heuristique" << " = " << args["heuristique"] << endl;
+		cout << "heuristic" << " = " << args["heuristic"] << endl;
 	}
 
 	void printGames() {
